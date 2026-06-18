@@ -1,0 +1,59 @@
+# =======================================
+# Tuxiaolai_Toolbox - Global .gitignore
+# =======================================
+
+## --- Build artifacts ---
+build/
+cmake-build-*/
+out/
+*.o
+*.obj
+*.exe
+*.dll
+*.lib
+*.a
+*.so
+*.dylib
+*.pdb
+*.ilk
+*.exp
+
+## --- IDE & Editor ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+## --- Qt ---
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+*.pro.user*
+*.autosave
+Debug/
+Release/
+x64/
+Win32/
+
+## --- CMake ---
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+compile_commands.json
+
+## --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+## --- Project-specific ---
+# Tu Toolbox 本地工作区缓存
+workspace_cache/
