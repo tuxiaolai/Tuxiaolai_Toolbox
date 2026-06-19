@@ -171,10 +171,31 @@ class NoTintDelegate : public QStyledItemDelegate
 {
 public:
     using QStyledItemDelegate::QStyledItemDelegate;
-    void initStyleOption(QStyleOptionViewItem *opt, const QModelIndex &idx) const override
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+               const QModelIndex &index) const override
     {
-        QStyledItemDelegate::initStyleOption(opt, idx);
-        opt->showDecorationSelected = false;
+        // 取出完整选项（initStyleOption 会填入图标、文字等）
+        QStyleOptionViewItem opt = option;
+        initStyleOption(&opt, index);
+
+        QIcon icon = opt.icon;
+        opt.icon = QIcon();                 // 清空图标，避免基类用 Selected 模式染色
+        opt.showDecorationSelected = false; // 装饰区不跟随选中背景
+
+        // 由 style 绘制背景、文字等（不含图标）
+        const QStyle *style = opt.widget ? opt.widget->style() : qApp->style();
+        style->drawControl(QStyle::CE_ItemViewItem, &opt, painter, opt.widget);
+
+        // 以 Normal 模式绘制图标，保证选中时颜色不变
+        if (!icon.isNull()) {
+            QRect iconRect = style->subElementRect(
+                QStyle::SE_ItemViewItemDecoration, &opt, opt.widget);
+            if (iconRect.isValid()) {
+                icon.paint(painter, iconRect, Qt::AlignCenter,
+                           QIcon::Normal, QIcon::Off);
+            }
+        }
     }
 };
 
