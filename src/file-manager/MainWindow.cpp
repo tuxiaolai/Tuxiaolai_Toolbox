@@ -16,6 +16,7 @@
 #include <QScrollBar>
 #include <QStyleFactory>
 #include <QFileInfo>
+#include <QStatusBar>
 
 // ---------------------------------------------------------------------------
 // 静态工具
@@ -191,7 +192,6 @@ void MainWindow::setupUI()
     m_fileModel = new QFileSystemModel(this);
     m_fileModel->setRootPath(QDir::homePath());
     m_fileModel->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot);
-    m_fileModel->setNameFiltersDisables(false);
 
     m_treeView = new QTreeView();
     m_treeView->setModel(m_fileModel);

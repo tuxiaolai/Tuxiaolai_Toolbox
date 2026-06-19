@@ -1,13 +1,16 @@
-set(SOURCES
+# ============================================================
+# 主应用（组合所有模块）
+# ============================================================
+set(MAIN_SOURCES
     main.cpp
     file-manager/MainWindow.cpp
 )
 
-set(HEADERS
+set(MAIN_HEADERS
     file-manager/MainWindow.h
 )
 
-add_executable(Tuxiaolai_Toolbox ${SOURCES} ${HEADERS})
+add_executable(Tuxiaolai_Toolbox ${MAIN_SOURCES} ${MAIN_HEADERS})
 
 target_link_libraries(Tuxiaolai_Toolbox PRIVATE
     Qt6::Core
@@ -16,8 +19,24 @@ target_link_libraries(Tuxiaolai_Toolbox PRIVATE
     Qt6::Network
 )
 
-# 安装规则（可选）
 install(TARGETS Tuxiaolai_Toolbox
     BUNDLE  DESTINATION .
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+# ============================================================
+# 独立模块入口（可单独编译调试）
+# ============================================================
+
+# --- 文件管理器 ---
+add_executable(FileManager
+    file-manager/MainWindow.cpp
+    file-manager/MainWindow.h
+    file-manager/main_filemanager.cpp
+)
+
+target_link_libraries(FileManager PRIVATE
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
 )
