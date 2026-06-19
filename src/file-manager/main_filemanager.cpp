@@ -7,11 +7,29 @@
  */
 
 #include <QApplication>
+#include <QtGlobal>
 #include "MainWindow.h"
+
+// 过滤 QFileSystemWatcher 在被监视目录变为不可访问（删除/权限变更/盘符移除）
+// 时输出的 "FindNextChangeNotification failed ... (拒绝访问。)" 无害警告。
+// 其余消息照常转发给默认处理器。
+static QtMessageHandler g_defaultMsgHandler = nullptr;
+static void fileManagerMsgFilter(QtMsgType type, const QMessageLogContext &ctx,
+                                 const QString &msg)
+{
+    if (type == QtWarningMsg
+        && msg.contains(QLatin1String("QFileSystemWatcher"))
+        && msg.contains(QLatin1String("FindNextChangeNotification failed"))) {
+        return;
+    }
+    if (g_defaultMsgHandler)
+        g_defaultMsgHandler(type, ctx, msg);
+}
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    g_defaultMsgHandler = qInstallMessageHandler(fileManagerMsgFilter);
 
     FileManager::MainWindow window;
     window.show();

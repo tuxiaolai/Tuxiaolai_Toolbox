@@ -530,10 +530,10 @@ static QString inputDialogText(QWidget *parent, const QString &title,
     QInputDialog dlg(parent);
     dlg.setWindowTitle(title);
     dlg.setLabelText(label);
+    dlg.setInputMode(QInputDialog::TextInput);
     dlg.setTextValue(defaultValue);
-    // 先 show 再设大小，避免 exec 内部布局冲突
-    dlg.show();
-    dlg.resize(480, 180);
+    // 只设最小尺寸，不强行 resize — let Qt layout 自主决定
+    dlg.setMinimumSize(380, 140);
     if (dlg.exec() != QDialog::Accepted) return {};
     return dlg.textValue().trimmed();
 }
