@@ -24,6 +24,10 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QMenu>
+#include <QShortcut>
+#include <QClipboard>
+#include <QMimeData>
+#include <QUrl>
 #include "CachedIconProvider.h"
 #include "SettingsDialog.h"
 
@@ -271,6 +275,7 @@ MainWindow::MainWindow(QWidget *parent)
     setupUI();
     applyIconMode(m_iconMode);  // 应用默认图标模式
     setupConnections();
+    setupShortcuts();
 }
 
 // ---------------------------------------------------------------------------
@@ -396,6 +401,23 @@ void MainWindow::setupConnections()
 
     // 设置按钮
     connect(m_btnSettings, &QPushButton::clicked, this, &MainWindow::openSettings);
+}
+
+// ---------------------------------------------------------------------------
+// 快捷键
+// ---------------------------------------------------------------------------
+void MainWindow::setupShortcuts()
+{
+    // 剪贴板
+    new QShortcut(QKeySequence::Copy,  this, SLOT(copySelected()));
+    new QShortcut(QKeySequence::Cut,   this, SLOT(cutSelected()));
+    new QShortcut(QKeySequence::Paste, this, SLOT(pasteFiles()));
+
+    // 文件操作
+    new QShortcut(QKeySequence(Qt::Key_Delete), this, SLOT(deleteSelected()));
+    new QShortcut(QKeySequence("Ctrl+N"),       this, SLOT(newFile()));
+    new QShortcut(QKeySequence("Ctrl+Shift+N"), this, SLOT(newFolder()));
+    new QShortcut(QKeySequence(Qt::Key_F2),     this, SLOT(renameSelected()));
 }
 
 // ---------------------------------------------------------------------------
@@ -526,17 +548,24 @@ void MainWindow::onContextMenu(const QPoint &pos)
         QMenu::separator { height:1px; background:#444; margin:4px 8px; }
     )");
 
-    QAction *actNewFile   = menu.addAction(icon("addFile"),   "新建文件");
-    QAction *actNewFolder = menu.addAction(icon("addDirectory"), "新建文件夹");
+    QAction *actNewFile   = menu.addAction(icon("addFile"),   "新建文件\tCtrl+N");
+    QAction *actNewFolder = menu.addAction(icon("addDirectory"), "新建文件夹\tCtrl+Shift+N");
     menu.addSeparator();
-    QAction *actRename    = menu.addAction(icon("edit"),    "重命名");
-    QAction *actDelete    = menu.addAction(icon("delete"),  "删除");
+    QAction *actCopy      = menu.addAction(icon("copy"),    "复制\tCtrl+C");
+    QAction *actCut       = menu.addAction(icon("cut"),     "剪切\tCtrl+X");
+    QAction *actPaste     = menu.addAction(icon("paste"),   "粘贴\tCtrl+V");
+    menu.addSeparator();
+    QAction *actRename    = menu.addAction(icon("edit"),    "重命名\tF2");
+    QAction *actDelete    = menu.addAction(icon("delete"),  "删除\tDel");
 
     QAction *chosen = menu.exec(m_treeView->viewport()->mapToGlobal(pos));
     if (chosen == actNewFile)       newFile();
     else if (chosen == actNewFolder) newFolder();
-    else if (chosen == actRename)   renameSelected();
-    else if (chosen == actDelete)   deleteSelected();
+    else if (chosen == actCopy)      copySelected();
+    else if (chosen == actCut)       cutSelected();
+    else if (chosen == actPaste)     pasteFiles();
+    else if (chosen == actRename)    renameSelected();
+    else if (chosen == actDelete)    deleteSelected();
 }
 
 // ---------------------------------------------------------------------------
@@ -808,6 +837,131 @@ void MainWindow::applyColumnVisibility()
 void MainWindow::applyStatusBarVisible(bool visible)
 {
     statusBar()->setVisible(visible);
+}
+
+// ---------------------------------------------------------------------------
+// 剪贴板操作（与 Windows 资源管理器共享）
+// ---------------------------------------------------------------------------
+void MainWindow::copySelected()
+{
+    QModelIndexList sel = m_treeView->selectionModel()->selectedRows(0);
+    if (sel.isEmpty()) return;
+
+    m_clipPaths.clear();
+    QList<QUrl> urls;
+    for (const auto &idx : sel) {
+        QString path = m_fileModel->filePath(idx);
+        m_clipPaths << path;
+        urls << QUrl::fromLocalFile(path);
+    }
+    m_clipIsCut = false;
+
+    // 系统剪贴板（与 Windows 资源管理器互通）
+    auto *mime = new QMimeData();
+    mime->setUrls(urls);
+    mime->setText(m_clipPaths.join("\r\n"));
+    QApplication::clipboard()->setMimeData(mime);
+
+    m_statusLabel->setText(QString("已复制 %1 个条目").arg(m_clipPaths.size()));
+}
+
+void MainWindow::cutSelected()
+{
+    QModelIndexList sel = m_treeView->selectionModel()->selectedRows(0);
+    if (sel.isEmpty()) return;
+
+    m_clipPaths.clear();
+    QList<QUrl> urls;
+    for (const auto &idx : sel) {
+        QString path = m_fileModel->filePath(idx);
+        m_clipPaths << path;
+        urls << QUrl::fromLocalFile(path);
+    }
+    m_clipIsCut = true;
+
+    // 系统剪贴板
+    auto *mime = new QMimeData();
+    mime->setUrls(urls);
+    mime->setText(m_clipPaths.join("\r\n"));
+    QApplication::clipboard()->setMimeData(mime);
+
+    m_statusLabel->setText(QString("已剪切 %1 个条目").arg(m_clipPaths.size()));
+}
+
+void MainWindow::pasteFiles()
+{
+    if (m_clipPaths.isEmpty()) return;
+
+    QString dest = targetDirectory();
+    pasteToDirectory(dest);
+}
+
+void MainWindow::pasteToDirectory(const QString &destDir)
+{
+    if (m_clipPaths.isEmpty()) return;
+
+    int failed = 0;
+    int done   = 0;
+
+    for (const QString &src : m_clipPaths) {
+        QFileInfo fi(src);
+        if (!fi.exists()) { ++failed; continue; }
+
+        QString dest = QDir(destDir).absoluteFilePath(fi.fileName());
+        if (src == dest) { ++failed; continue; }
+
+        bool ok = false;
+        if (m_clipIsCut) {
+            // 剪切 = 移动
+            ok = QFile::rename(src, dest);
+        } else {
+            // 复制
+            if (fi.isDir()) {
+                ok = copyDirRecursive(src, dest);
+            } else {
+                QFile::remove(dest);  // 覆盖前先删
+                ok = QFile::copy(src, dest);
+            }
+        }
+
+        if (ok)
+            ++done;
+        else
+            ++failed;
+    }
+
+    // 剪切完成后清空剪贴板状态
+    if (m_clipIsCut) {
+        m_clipPaths.clear();
+        m_clipIsCut = false;
+    }
+
+    refreshCurrentPath();
+    m_statusLabel->setText(QString("粘贴完成：%1 成功，%2 失败").arg(done).arg(failed));
+}
+
+/// @brief 递归复制目录
+static bool copyDirRecursive(const QString &srcDir, const QString &destDir)
+{
+    QDir src(srcDir);
+    if (!src.exists()) return false;
+
+    QDir dest(destDir);
+    if (!dest.exists()) {
+        if (!dest.mkpath(".")) return false;
+    }
+
+    bool ok = true;
+    for (const QFileInfo &fi : src.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot)) {
+        QString dstPath = dest.absoluteFilePath(fi.fileName());
+        if (fi.isDir()) {
+            ok &= copyDirRecursive(fi.absoluteFilePath(), dstPath);
+        } else {
+            QFile::remove(dstPath);
+            ok &= QFile::copy(fi.absoluteFilePath(), dstPath);
+        }
+    }
+    return ok;
 }
 
 } // namespace FileManager

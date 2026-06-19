@@ -18,6 +18,8 @@
 #include <QMenu>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QClipboard>
+#include <QMimeData>
 
 namespace FileManager {
 
@@ -45,9 +47,15 @@ private slots:
     void deleteSelected();
     void renameSelected();
 
+    // 剪贴板操作（与 Windows 资源管理器共享）
+    void copySelected();
+    void cutSelected();
+    void pasteFiles();
+
 private:
     void setupUI();
     void setupConnections();
+    void setupShortcuts();
     void applyIconMode(int mode);
     void applyStatusBarVisible(bool visible);
     void applyColumnVisibility();
@@ -58,6 +66,11 @@ private:
     QString currentDirectory() const;
     QString targetDirectory() const;   // 创建文件/目录时用的目标路径
     void refreshCurrentPath();
+    void pasteToDirectory(const QString &destDir);
+
+    // 剪贴板状态（copy=仅路径 | cut=路径+移动标记）
+    QStringList       m_clipPaths;
+    bool              m_clipIsCut     = false;
 
     QTreeView        *m_treeView;
     QFileSystemModel *m_fileModel;
