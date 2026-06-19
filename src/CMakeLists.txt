@@ -5,12 +5,14 @@ set(MAIN_SOURCES
     main.cpp
     file-manager/MainWindow.cpp
     file-manager/SettingsDialog.cpp
+    file-manager/CachedIconProvider.cpp
     file-manager/resources.qrc
 )
 
 set(MAIN_HEADERS
     file-manager/MainWindow.h
     file-manager/SettingsDialog.h
+    file-manager/CachedIconProvider.h
 )
 
 add_executable(Tuxiaolai_Toolbox ${MAIN_SOURCES} ${MAIN_HEADERS})
@@ -37,6 +39,8 @@ add_executable(FileManager
     file-manager/MainWindow.h
     file-manager/SettingsDialog.cpp
     file-manager/SettingsDialog.h
+    file-manager/CachedIconProvider.cpp
+    file-manager/CachedIconProvider.h
     file-manager/resources.qrc
     file-manager/main_filemanager.cpp
 )

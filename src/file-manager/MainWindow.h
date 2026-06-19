@@ -38,7 +38,8 @@ private slots:
 private:
     void setupUI();
     void setupConnections();
-    void applyIconsSetting(bool show);
+    void applyIconMode(int mode);
+    void refreshTree();
 
     QTreeView        *m_treeView;
     QFileSystemModel *m_fileModel;
@@ -46,7 +47,7 @@ private:
     QPushButton      *m_btnBrowse;
     QPushButton      *m_btnSettings;
     QLabel           *m_statusLabel;
-    bool              m_showIcons = true;    // 默认显示图标
+    int               m_iconMode = 1;   // 默认：预设图标
 };
 
 } // namespace FileManager

@@ -14,6 +14,7 @@
 #include <QFileInfo>
 #include <QStatusBar>
 #include <QFileDialog>
+#include "CachedIconProvider.h"
 #include "SettingsDialog.h"
 
 // ---------------------------------------------------------------------------
@@ -307,29 +308,41 @@ void MainWindow::navigateToPath()
 // ---------------------------------------------------------------------------
 void MainWindow::openSettings()
 {
-    SettingsDialog dlg(m_showIcons, this);
+    SettingsDialog dlg(m_iconMode, this);
     if (dlg.exec() == QDialog::Accepted) {
-        bool wantIcons = dlg.showIcons();
-        if (wantIcons != m_showIcons) {
-            m_showIcons = wantIcons;
-            applyIconsSetting(m_showIcons);
+        int newMode = dlg.iconMode();
+        if (newMode != m_iconMode) {
+            m_iconMode = newMode;
+            applyIconMode(m_iconMode);
         }
     }
 }
 
-void MainWindow::applyIconsSetting(bool show)
+/// @brief 应用图标显示模式
+void MainWindow::applyIconMode(int mode)
 {
-    if (show) {
+    switch (mode) {
+    case IconReal:
         m_fileModel->setIconProvider(new QFileIconProvider());
-    } else {
+        break;
+    case IconPreset:
+        m_fileModel->setIconProvider(new CachedIconProvider());
+        break;
+    default: // IconNone
         class NullIconProvider : public QFileIconProvider {
         public:
             QIcon icon(IconType) const override { return QIcon(); }
             QIcon icon(const QFileInfo &) const override { return QIcon(); }
         };
         m_fileModel->setIconProvider(new NullIconProvider());
+        break;
     }
-    // 强制模型重新加载以应用图标变更
+    refreshTree();
+}
+
+/// @brief 刷新树视图（图标变更后调用）
+void MainWindow::refreshTree()
+{
     QString root = m_fileModel->rootPath();
     QModelIndex idx = m_fileModel->setRootPath(root);
     m_treeView->setRootIndex(idx);
