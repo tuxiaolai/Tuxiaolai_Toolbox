@@ -473,19 +473,25 @@ void MainWindow::updateSelectionStatus()
 // ---------------------------------------------------------------------------
 void MainWindow::onContextMenu(const QPoint &pos)
 {
+    // 主题检测
+    bool dark = qApp->palette().window().color().lightness() < 160;
+    auto icon = [dark](const QString &name) {
+        return QIcon(QString(":/icons/%1%2.svg").arg(name).arg(dark ? "_dark" : ""));
+    };
+
     QMenu menu(this);
     menu.setStyleSheet(R"(
-        QMenu { background:#2a2a2a; color:#ccc; border:1px solid #444; padding:4px; }
-        QMenu::item { padding:6px 24px; }
+        QMenu { background:#2a2a2a; color:#ccc; border:1px solid #444; border-radius:8px; padding:6px; }
+        QMenu::item { padding:6px 24px 6px 32px; }
         QMenu::item:selected { background:#3a3a3a; color:#fff; }
         QMenu::separator { height:1px; background:#444; margin:4px 8px; }
     )");
 
-    QAction *actNewFile   = menu.addAction("📄 新建文件");
-    QAction *actNewFolder = menu.addAction("📁 新建文件夹");
+    QAction *actNewFile   = menu.addAction(icon("addFile"),   "新建文件");
+    QAction *actNewFolder = menu.addAction(icon("addDirectory"), "新建文件夹");
     menu.addSeparator();
-    QAction *actRename    = menu.addAction("✏️ 重命名");
-    QAction *actDelete    = menu.addAction("🗑 删除");
+    QAction *actRename    = menu.addAction(icon("edit"),    "重命名");
+    QAction *actDelete    = menu.addAction(icon("delete"),  "删除");
 
     QAction *chosen = menu.exec(m_treeView->viewport()->mapToGlobal(pos));
     if (chosen == actNewFile)       newFile();
