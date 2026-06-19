@@ -97,6 +97,7 @@ QTreeView {
     outline: none;
     color: #ccc;
     font-size: 12px;
+    show-decoration-selected: 0;
 }
 QTreeView::item {
     padding: 2px 6px;
@@ -179,6 +180,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setStyleSheet(kStyleSheet);
     setupUI();
+    applyIconMode(m_iconMode);  // 应用默认图标模式
     setupConnections();
 }
 
