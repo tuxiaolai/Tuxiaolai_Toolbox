@@ -209,9 +209,18 @@ class SmoothTreeView : public QTreeView
 public:
     explicit SmoothTreeView(QWidget *parent = nullptr)
         : QTreeView(parent)
+        , m_anim(new QPropertyAnimation(this))
     {
         setVerticalScrollMode(ScrollPerPixel);
+        m_anim->setTargetObject(this);
+        m_anim->setPropertyName("scrollOffset");
+        m_anim->setEasingCurve(QEasingCurve::OutQuad);
+        m_anim->setDuration(180);
     }
+
+    // Q_PROPERTY 不便用，直接暴露 setter/getter
+    int scrollOffset() const { return verticalScrollBar()->value(); }
+    void setScrollOffset(int v) { verticalScrollBar()->setValue(v); }
 
 protected:
     void wheelEvent(QWheelEvent *event) override
@@ -228,26 +237,19 @@ protected:
 
         QScrollBar *bar = verticalScrollBar();
         int target = bar->value() - steps * 60;
+        target = qBound(bar->minimum(), target, bar->maximum());
 
-        // 停止上一次动画
-        if (m_anim) {
-            m_anim->stop();
-            delete m_anim;
-        }
-
-        m_anim = new QPropertyAnimation(bar, "value", this);
-        m_anim->setDuration(180);
+        m_anim->stop();
         m_anim->setStartValue(bar->value());
-        m_anim->setEndValue(qBound(bar->minimum(), target, bar->maximum()));
-        m_anim->setEasingCurve(QEasingCurve::OutQuad);
-        m_anim->start(QAbstractAnimation::DeleteWhenStopped);
+        m_anim->setEndValue(target);
+        m_anim->start();
 
         event->accept();
     }
 
 private:
     int m_scrollRemainder = 0;
-    QPropertyAnimation *m_anim = nullptr;
+    QPropertyAnimation *m_anim;
 };
 
 namespace FileManager {
