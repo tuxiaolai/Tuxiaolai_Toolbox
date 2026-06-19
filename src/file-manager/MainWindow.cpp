@@ -943,6 +943,9 @@ void MainWindow::pasteToDirectory(const QString &destDir)
     int failed = 0;
     int done   = 0;
 
+    // 冲突处理状态：-1=询问 0=跳过 1=覆盖
+    int conflictAction = -1;
+
     for (const QString &src : m_clipPaths) {
         QFileInfo fi(src);
         if (!fi.exists()) { ++failed; continue; }
@@ -950,16 +953,46 @@ void MainWindow::pasteToDirectory(const QString &destDir)
         QString dest = QDir(destDir).absoluteFilePath(fi.fileName());
         if (src == dest) { ++failed; continue; }
 
+        // 冲突检测
+        if (QFileInfo::exists(dest) && conflictAction < 1) {
+            if (conflictAction == -1) {
+                QMessageBox dlg(this);
+                dlg.setWindowTitle("文件冲突");
+                dlg.setText(QString("目标已存在：\n%1\n\n是否覆盖？").arg(fi.fileName()));
+                auto *skipBtn   = dlg.addButton("跳过",         QMessageBox::NoRole);
+                auto *skipAllBtn= dlg.addButton("全部跳过",      QMessageBox::NoRole);
+                auto *overBtn   = dlg.addButton("覆盖",         QMessageBox::YesRole);
+                auto *overAllBtn= dlg.addButton("全部覆盖",      QMessageBox::YesRole);
+                dlg.setDefaultButton(overBtn);
+                dlg.exec();
+                auto *clicked = dlg.clickedButton();
+                if (clicked == skipBtn)    { /* 跳过，不改变状态 */ }
+                else if (clicked == skipAllBtn) { conflictAction = 0; }
+                else if (clicked == overBtn)    { /* 覆盖本次 */ }
+                else if (clicked == overAllBtn) { conflictAction = 1; }
+                else { ++failed; continue; }
+
+                if (clicked != overBtn && clicked != overAllBtn) {
+                    ++failed; continue;
+                }
+            } else { // conflictAction == 0 (全部跳过)
+                ++failed; continue;
+            }
+        }
+
         bool ok = false;
         if (m_clipIsCut) {
-            // 剪切 = 移动
+            // 剪切 = 移动（覆盖已有文件）
+            if (QFileInfo::exists(dest))
+                QFile::remove(dest);
             ok = QFile::rename(src, dest);
         } else {
             // 复制
             if (fi.isDir()) {
                 ok = copyDirRecursive(src, dest);
             } else {
-                QFile::remove(dest);  // 覆盖前先删
+                if (QFileInfo::exists(dest))
+                    QFile::remove(dest);
                 ok = QFile::copy(src, dest);
             }
         }

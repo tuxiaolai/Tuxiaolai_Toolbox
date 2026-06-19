@@ -54,6 +54,7 @@ CachedIconProvider::CachedIconProvider()
     m_cache["java"]         = loadSvg("java");
     m_cache["javascript"]   = loadSvg("javascript");
     m_cache["kotlin"]       = loadSvg("kotlin");
+    m_cache["markdown"]     = loadSvg("markdown");
     m_cache["python"]       = loadSvg("python");
     m_cache["qt"]           = loadSvg("qt");
     m_cache["typescript"]   = loadSvg("typescript");
