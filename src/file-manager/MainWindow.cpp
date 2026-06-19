@@ -520,15 +520,26 @@ void MainWindow::refreshCurrentPath()
     m_treeView->setRootIndex(idx);
 }
 
+// 辅助：消除 QInputDialog 几何警告
+static QString inputDialogText(QWidget *parent, const QString &title,
+                                const QString &label, const QString &defaultValue)
+{
+    QInputDialog dlg(parent);
+    dlg.setWindowTitle(title);
+    dlg.setLabelText(label);
+    dlg.setTextValue(defaultValue);
+    dlg.setMinimumWidth(380);
+    if (dlg.exec() != QDialog::Accepted) return {};
+    return dlg.textValue().trimmed();
+}
+
 // --- 新建文件 ---
 void MainWindow::newFile()
 {
-    bool ok;
-    QString name = QInputDialog::getText(this, "新建文件",
-        "文件名称:", QLineEdit::Normal, "", &ok);
-    if (!ok || name.trimmed().isEmpty()) return;
+    QString name = inputDialogText(this, "新建文件", "文件名称:", "");
+    if (name.isEmpty()) return;
 
-    QString path = QDir(currentDirectory()).absoluteFilePath(name.trimmed());
+    QString path = QDir(currentDirectory()).absoluteFilePath(name);
     QFile file(path);
     if (file.exists()) {
         QMessageBox::warning(this, "新建文件", "文件已存在。");
@@ -546,12 +557,10 @@ void MainWindow::newFile()
 // --- 新建文件夹 ---
 void MainWindow::newFolder()
 {
-    bool ok;
-    QString name = QInputDialog::getText(this, "新建文件夹",
-        "文件夹名称:", QLineEdit::Normal, "", &ok);
-    if (!ok || name.trimmed().isEmpty()) return;
+    QString name = inputDialogText(this, "新建文件夹", "文件夹名称:", "");
+    if (name.isEmpty()) return;
 
-    QString path = QDir(currentDirectory()).absoluteFilePath(name.trimmed());
+    QString path = QDir(currentDirectory()).absoluteFilePath(name);
     QDir dir(path);
     if (dir.exists()) {
         QMessageBox::warning(this, "新建文件夹", "文件夹已存在。");
@@ -628,12 +637,10 @@ void MainWindow::renameSelected()
     QFileInfo oldInfo(oldPath);
     QString oldName = oldInfo.fileName();
 
-    bool ok;
-    QString newName = QInputDialog::getText(this, "重命名",
-        "新名称:", QLineEdit::Normal, oldName, &ok);
-    if (!ok || newName.trimmed().isEmpty() || newName == oldName) return;
+    QString newName = inputDialogText(this, "重命名", "新名称:", oldName);
+    if (newName.isEmpty() || newName == oldName) return;
 
-    QString newPath = oldInfo.absoluteDir().absoluteFilePath(newName.trimmed());
+    QString newPath = oldInfo.absoluteDir().absoluteFilePath(newName);
     if (QFileInfo::exists(newPath)) {
         QMessageBox::warning(this, "重命名", "目标名称已存在。");
         return;
