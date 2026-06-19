@@ -11,10 +11,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QHeaderView>
-#include <QSplitter>
-#include <QFrame>
 #include <QScrollBar>
-#include <QStyleFactory>
 #include <QFileInfo>
 #include <QStatusBar>
 
@@ -40,59 +37,58 @@ QString formatFileSize(qint64 bytes)
 // 样式常量（内联 QSS）
 // ---------------------------------------------------------------------------
 static const char *kStyleSheet = R"(
-/* ── 全局 ── */
+/* ── 全局：纯色单色系 ── */
 QMainWindow {
-    background-color: #1e1e2e;
+    background-color: #1e1e1e;
 }
 
 /* ── 路径栏 ── */
 QLineEdit#pathBar {
-    background-color: #181825;
-    color: #cdd6f4;
-    border: 1px solid #313244;
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-size: 13px;
+    background-color: #252525;
+    color: #e0e0e0;
+    border: 1px solid #333;
+    border-radius: 0;
+    padding: 8px 12px;
+    font-size: 12.5px;
     font-family: "Consolas", "Microsoft YaHei UI", monospace;
-    selection-background-color: #45475a;
 }
 
 QLineEdit#pathBar:focus {
-    border: 1px solid #89b4fa;
+    border: 1px solid #888;
 }
 
 /* ── 树视图 ── */
 QTreeView {
-    background-color: #1e1e2e;
-    alternate-background-color: #181825;
+    background-color: #1e1e1e;
+    alternate-background-color: #222;
     border: none;
     outline: none;
-    color: #cdd6f4;
-    font-size: 13px;
+    color: #ccc;
+    font-size: 12.5px;
     font-family: "Segoe UI", "Microsoft YaHei UI", sans-serif;
 }
 
 QTreeView::item {
-    padding: 4px 8px;
-    min-height: 28px;
-    border-radius: 4px;
+    padding: 4px 6px;
+    min-height: 24px;
+    border-radius: 0;
 }
 
 QTreeView::item:hover {
-    background-color: #313244;
+    background-color: #2a2a2a;
 }
 
 QTreeView::item:selected {
-    background-color: #45475a;
-    color: #cdd6f4;
+    background-color: #333;
+    color: #fff;
 }
 
+/* ── 展开/折叠箭头 ── */
 QTreeView::branch:has-children:!has-siblings:closed,
 QTreeView::branch:closed:has-children:has-siblings {
     border-image: none;
     image: none;
 }
-
 QTreeView::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings {
     border-image: none;
@@ -101,49 +97,42 @@ QTreeView::branch:open:has-children:has-siblings {
 
 /* ── 表头 ── */
 QHeaderView::section {
-    background-color: #181825;
-    color: #6c7086;
+    background-color: #252525;
+    color: #999;
     border: none;
-    border-bottom: 1px solid #313244;
-    padding: 6px 12px;
-    font-size: 12px;
-    font-weight: bold;
+    border-bottom: 1px solid #333;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
 }
 
 /* ── 滚动条 ── */
 QScrollBar:vertical {
-    background-color: #1e1e2e;
-    width: 8px;
+    background-color: #1e1e1e;
+    width: 6px;
     margin: 0;
 }
-
 QScrollBar::handle:vertical {
-    background-color: #45475a;
-    border-radius: 4px;
+    background-color: #3a3a3a;
+    border-radius: 0;
     min-height: 30px;
 }
-
 QScrollBar::handle:vertical:hover {
-    background-color: #585b70;
+    background-color: #555;
 }
-
 QScrollBar::add-line:vertical,
 QScrollBar::sub-line:vertical {
     height: 0;
+    border: none;
 }
 
 /* ── 状态栏 ── */
 QStatusBar {
-    background-color: #181825;
-    color: #6c7086;
-    border-top: 1px solid #313244;
-    font-size: 12px;
-}
-
-/* ── 分割器 ── */
-QSplitter::handle {
-    background-color: #313244;
-    width: 1px;
+    background-color: #252525;
+    color: #888;
+    border-top: 1px solid #333;
+    font-size: 11px;
+    padding: 0 8px;
 }
 )";
 
