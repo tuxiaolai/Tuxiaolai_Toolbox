@@ -209,18 +209,12 @@ class SmoothTreeView : public QTreeView
 public:
     explicit SmoothTreeView(QWidget *parent = nullptr)
         : QTreeView(parent)
-        , m_anim(new QPropertyAnimation(this))
+        , m_anim(new QPropertyAnimation(verticalScrollBar(), "value"))
     {
         setVerticalScrollMode(ScrollPerPixel);
-        m_anim->setTargetObject(this);
-        m_anim->setPropertyName("scrollOffset");
         m_anim->setEasingCurve(QEasingCurve::OutQuad);
         m_anim->setDuration(180);
     }
-
-    // Q_PROPERTY 不便用，直接暴露 setter/getter
-    int scrollOffset() const { return verticalScrollBar()->value(); }
-    void setScrollOffset(int v) { verticalScrollBar()->setValue(v); }
 
 protected:
     void wheelEvent(QWheelEvent *event) override
@@ -240,6 +234,7 @@ protected:
         target = qBound(bar->minimum(), target, bar->maximum());
 
         m_anim->stop();
+        m_anim->setTargetObject(bar);
         m_anim->setStartValue(bar->value());
         m_anim->setEndValue(target);
         m_anim->start();
