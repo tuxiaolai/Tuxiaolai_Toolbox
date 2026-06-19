@@ -225,12 +225,12 @@ public:
         setVerticalScrollMode(ScrollPerPixel);
         setMouseTracking(true);
         m_anim->setEasingCurve(QEasingCurve::OutQuad);
-        m_anim->setDuration(180);
+        m_anim->setDuration(100);   // 固定动画时长，不随步长变化
     }
 
-    /// 设置滚轮动画持续时间（毫秒），50=极快 400=极慢
-    void setScrollSpeed(int ms) { m_anim->setDuration(qBound(50, ms, 400)); }
-    int  scrollSpeed() const    { return m_anim->duration(); }
+    /// 设置每格滚轮滚动的像素数，默认 60
+    void setScrollStep(int px) { m_scrollStep = qBound(20, px, 200); }
+    int  scrollStep() const    { return m_scrollStep; }
 
 protected:
     void wheelEvent(QWheelEvent *event) override
@@ -246,7 +246,7 @@ protected:
         m_scrollRemainder -= steps * 120;
 
         QScrollBar *bar = verticalScrollBar();
-        int target = bar->value() - steps * 60;
+        int target = bar->value() - steps * m_scrollStep;
         target = qBound(bar->minimum(), target, bar->maximum());
 
         m_anim->stop();
@@ -295,6 +295,7 @@ protected:
 
 private:
     int m_scrollRemainder = 0;
+    int m_scrollStep = 60;
     QPropertyAnimation *m_anim;
     bool m_midPressed = false;
     QPoint m_midOrigin;
@@ -319,6 +320,7 @@ MainWindow::MainWindow(QWidget *parent)
     setStyleSheet(kStyleSheet);
     setupUI();
     applyIconMode(m_iconMode);  // 应用默认图标模式
+    applyStatusBarVisible(m_showStatusBar);
     setupConnections();
     setupShortcuts();
 }
@@ -488,7 +490,7 @@ void MainWindow::openSettings()
 {
     SettingsDialog dlg(m_iconMode, m_showStatusBar, m_deleteToTrash,
                        m_showSizeCol, m_showTypeCol, m_showDateCol,
-                       m_scrollSpeed, this);
+                       m_scrollStep, this);
     if (dlg.exec() == QDialog::Accepted) {
         int newMode = dlg.iconMode();
         if (newMode != m_iconMode) {
@@ -518,10 +520,10 @@ void MainWindow::openSettings()
         if (colsChanged)
             applyColumnVisibility();
 
-        int newSpeed = dlg.scrollSpeed();
-        if (newSpeed != m_scrollSpeed) {
-            m_scrollSpeed = newSpeed;
-            static_cast<SmoothTreeView*>(m_treeView)->setScrollSpeed(m_scrollSpeed);
+        int newStep = dlg.scrollSpeed();
+        if (newStep != m_scrollStep) {
+            m_scrollStep = newStep;
+            static_cast<SmoothTreeView*>(m_treeView)->setScrollStep(m_scrollStep);
         }
     }
 }
@@ -946,10 +948,33 @@ void MainWindow::cutSelected()
 
 void MainWindow::pasteFiles()
 {
-    if (m_clipPaths.isEmpty()) return;
+    // 优先内部剪贴板（程序内复制/剪切）
+    if (!m_clipPaths.isEmpty()) {
+        pasteToDirectory(targetDirectory());
+        return;
+    }
 
-    QString dest = targetDirectory();
-    pasteToDirectory(dest);
+    // 回退：从系统剪贴板读取（Windows Explorer 等）
+    const QMimeData *mime = QApplication::clipboard()->mimeData();
+    if (!mime || !mime->hasUrls()) return;
+
+    QStringList paths;
+    for (const QUrl &url : mime->urls()) {
+        if (url.isLocalFile())
+            paths << url.toLocalFile();
+    }
+    if (paths.isEmpty()) return;
+
+    // 暂时替换 m_clipPaths（只复制，不移动）
+    QStringList saved = m_clipPaths;
+    bool wasCut = m_clipIsCut;
+    m_clipPaths = paths;
+    m_clipIsCut = false;
+
+    pasteToDirectory(targetDirectory());
+
+    m_clipPaths = saved;
+    m_clipIsCut = wasCut;
 }
 
 void MainWindow::pasteToDirectory(const QString &destDir)

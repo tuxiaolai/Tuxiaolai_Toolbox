@@ -10,6 +10,7 @@
 #include <QButtonGroup>
 #include <QRadioButton>
 #include <QCheckBox>
+#include <QLabel>
 #include <QSlider>
 
 namespace FileManager {

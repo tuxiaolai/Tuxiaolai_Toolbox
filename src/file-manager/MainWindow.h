@@ -79,12 +79,12 @@ private:
     QPushButton      *m_btnSettings;
     QLabel           *m_statusLabel;
     int               m_iconMode       = 1;
-    bool              m_showStatusBar  = true;
+    bool              m_showStatusBar  = false;
     bool              m_deleteToTrash  = true;
     bool              m_showSizeCol    = true;
     bool              m_showTypeCol    = true;
     bool              m_showDateCol    = true;
-    int               m_scrollSpeed    = 180;
+    int               m_scrollStep     = 60;
 };
 
 } // namespace FileManager

@@ -143,23 +143,23 @@ SettingsDialog::SettingsDialog(int currentMode, bool statusBarVisible,
     layout->addWidget(sep3);
     layout->addSpacing(4);
 
-    // ── 滚动速度 ──
-    layout->addWidget(new QLabel("滚轮动画速度："));
+    // ── 滚动步长 ──
+    layout->addWidget(new QLabel("滚轮每格滚动距离（像素）："));
 
     m_sliderScroll = new QSlider(Qt::Horizontal);
-    m_sliderScroll->setRange(50, 400);
+    m_sliderScroll->setRange(20, 200);
     m_sliderScroll->setValue(scrollSpeed);
     m_sliderScroll->setTickPosition(QSlider::TicksBelow);
-    m_sliderScroll->setTickInterval(50);
+    m_sliderScroll->setTickInterval(20);
     layout->addWidget(m_sliderScroll);
 
-    m_lblScrollVal = new QLabel(QString::number(scrollSpeed) + " ms");
+    m_lblScrollVal = new QLabel(QString::number(scrollSpeed) + " px");
     m_lblScrollVal->setAlignment(Qt::AlignCenter);
     layout->addWidget(m_lblScrollVal);
 
     // 滑块值变化时更新标签
     connect(m_sliderScroll, &QSlider::valueChanged, this, [this](int v) {
-        m_lblScrollVal->setText(QString::number(v) + " ms");
+        m_lblScrollVal->setText(QString::number(v) + " px");
     });
 
     // ── 按钮 ──
