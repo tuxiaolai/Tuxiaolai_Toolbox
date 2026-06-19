@@ -107,20 +107,11 @@ void ToolboxWindow::setupUI()
     mainLayout->setSpacing(0);
 
     // ───────────────────────────────────────────────
-    // 1. 创建 QSplitter（Activity Bar | Side Panel | Content Area）
-    // ───────────────────────────────────────────────
-    m_splitter = new QSplitter(Qt::Horizontal);
-    m_splitter->setHandleWidth(4);                  // 拖拽手柄宽度，方便鼠标抓取
-    m_splitter->setChildrenCollapsible(false);      // 不允许完全折叠
-    mainLayout->addWidget(m_splitter);
-
-    // ───────────────────────────────────────────────
-    // 2. Activity Bar（初始 50px，可拖动改变宽度）
+    // 1. Activity Bar（固定在左侧，可拖动移动窗口）
     // ───────────────────────────────────────────────
     m_activityBar = new QWidget();
     m_activityBar->setObjectName("activityBar");
-    m_activityBar->setMinimumWidth(40);
-    m_activityBar->setMaximumWidth(300);
+    m_activityBar->setFixedWidth(50);
     auto *actLay = new QVBoxLayout(m_activityBar);
     actLay->setContentsMargins(0, 8, 0, 8);
     actLay->setSpacing(2);
@@ -136,13 +127,18 @@ void ToolboxWindow::setupUI()
     actLay->addWidget(m_btnFileMgr);
     actLay->addStretch();
 
-    m_splitter->addWidget(m_activityBar);
+    mainLayout->addWidget(m_activityBar);
+
+    // 让活动栏可拖动移动窗口（类似标题栏）
+    m_activityBar->installEventFilter(this);
 
     // ───────────────────────────────────────────────
-    // 3. Side Panel（可折叠隐藏，默认展开 280px）
+    // 2. QSplitter（Side Panel | Content）
     // ───────────────────────────────────────────────
-    m_sidePanel = new QWidget();
-    m_sidePanel->setMinimumWidth(160);
+    m_splitter = new QSplitter(Qt::Horizontal);
+    m_splitter->setHandleWidth(1);
+    m_splitter->setChildrenCollapsible(false);
+    mainLayout->addWidget(m_splitter, 1);
     m_sidePanel->setMaximumWidth(500);
     auto *sideLay = new QVBoxLayout(m_sidePanel);
     sideLay->setContentsMargins(0, 0, 0, 0);
@@ -199,7 +195,7 @@ void ToolboxWindow::setupUI()
     // 5. 设置初始分割比例
     //    [Activity Bar: 50px] [Side Panel: 280px] [Content: 剩余]
     // ───────────────────────────────────────────────
-    m_splitter->setSizes({50, 280, width() - 50 - 280});
+    m_splitter->setSizes({280, width() - 50 - 280});
 
     // ───────────────────────────────────────────────
     // 6. 连接信号
@@ -230,4 +226,23 @@ void ToolboxWindow::setSidePanelVisible(bool visible)
         m_sidePanel->setMinimumWidth(0);     // 允许分割器重新分配空间
         m_btnFileMgr->setChecked(false);
     }
+}
+
+bool ToolboxWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == m_activityBar && event->type() == QEvent::MouseButtonPress) {
+        auto *me = static_cast<QMouseEvent*>(event);
+        if (me->button() == Qt::LeftButton) {
+            m_dragStartPos = me->globalPosition().toPoint() - frameGeometry().topLeft();
+            return true;
+        }
+    }
+    if (obj == m_activityBar && event->type() == QEvent::MouseMove) {
+        auto *me = static_cast<QMouseEvent*>(event);
+        if (me->buttons() & Qt::LeftButton) {
+            move(me->globalPosition().toPoint() - m_dragStartPos);
+            return true;
+        }
+    }
+    return QMainWindow::eventFilter(obj, event);
 }

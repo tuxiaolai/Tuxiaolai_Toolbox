@@ -19,6 +19,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QStackedWidget>
+#include <QMouseEvent>
 
 namespace FileManager { class MainWindow; }
 
@@ -27,6 +28,9 @@ class ToolboxWindow : public QMainWindow
     Q_OBJECT
 public:
     explicit ToolboxWindow(QWidget *parent = nullptr);
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
 
 private:
     void setupUI();
@@ -47,6 +51,7 @@ private:
     // 窗口状态
     bool  m_sideVisible = true;
     int   m_sideWidth   = 280;
+    QPoint m_dragStartPos;  // 活动栏拖拽窗口起始点
 };
 
 #endif // TOOLBOXWINDOW_H
