@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QLabel>
+#include <QFrame>
 
 static const char *kDlgStyle = R"(
 QDialog {
@@ -17,22 +18,29 @@ QLabel {
     color: #999;
     font-size: 12px;
 }
-QRadioButton {
+QRadioButton, QCheckBox {
     color: #ccc;
     font-size: 12px;
     spacing: 8px;
     padding: 2px 0;
 }
-QRadioButton::indicator {
+QRadioButton::indicator, QCheckBox::indicator {
     width: 14px;
     height: 14px;
     border-radius: 7px;
     background-color: #252525;
     border: 1px solid #444;
 }
-QRadioButton::indicator:checked {
+QRadioButton::indicator:checked, QCheckBox::indicator:checked {
     background-color: #555;
     border: 1px solid #888;
+}
+QCheckBox::indicator {
+    border-radius: 2px;
+}
+QFrame#separator {
+    height: 1px;
+    background-color: #333;
 }
 QPushButton {
     background-color: #333;
@@ -49,19 +57,20 @@ QPushButton:hover {
 
 namespace FileManager {
 
-SettingsDialog::SettingsDialog(int currentMode, QWidget *parent)
+SettingsDialog::SettingsDialog(int currentMode, bool statusBarVisible,
+                               QWidget *parent)
     : QDialog(parent)
 {
     setWindowTitle("文件管理器 — 设置");
-    setFixedSize(320, 180);
+    setFixedSize(340, 260);
     setStyleSheet(kDlgStyle);
 
     auto *layout = new QVBoxLayout(this);
     layout->setContentsMargins(20, 16, 20, 16);
-    layout->setSpacing(10);
+    layout->setSpacing(8);
 
-    auto *hint = new QLabel("图标显示模式：");
-    layout->addWidget(hint);
+    // ── 图标模式 ──
+    layout->addWidget(new QLabel("图标显示模式："));
 
     m_group = new QButtonGroup(this);
 
@@ -73,7 +82,6 @@ SettingsDialog::SettingsDialog(int currentMode, QWidget *parent)
     m_group->addButton(m_radioPreset, IconPreset);
     m_group->addButton(m_radioNone,   IconNone);
 
-    // 设置当前选中项
     switch (currentMode) {
     case IconReal:   m_radioReal->setChecked(true);   break;
     case IconPreset: m_radioPreset->setChecked(true); break;
@@ -84,16 +92,36 @@ SettingsDialog::SettingsDialog(int currentMode, QWidget *parent)
     layout->addWidget(m_radioPreset);
     layout->addWidget(m_radioNone);
 
+    // ── 分隔线 ──
+    auto *sep = new QFrame();
+    sep->setObjectName("separator");
+    sep->setFrameShape(QFrame::HLine);
+    layout->addSpacing(4);
+    layout->addWidget(sep);
+    layout->addSpacing(4);
+
+    // ── 状态栏开关 ──
+    m_chkStatusBar = new QCheckBox("显示状态栏");
+    m_chkStatusBar->setChecked(statusBarVisible);
+    layout->addWidget(m_chkStatusBar);
+
+    // ── 按钮 ──
     auto *buttonBox = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    layout->addSpacing(4);
     layout->addWidget(buttonBox);
 }
 
 int SettingsDialog::iconMode() const
 {
     return m_group->checkedId();
+}
+
+bool SettingsDialog::statusBarVisible() const
+{
+    return m_chkStatusBar->isChecked();
 }
 
 } // namespace FileManager

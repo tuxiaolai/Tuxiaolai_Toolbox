@@ -403,12 +403,17 @@ void MainWindow::navigateToPath()
 // ---------------------------------------------------------------------------
 void MainWindow::openSettings()
 {
-    SettingsDialog dlg(m_iconMode, this);
+    SettingsDialog dlg(m_iconMode, m_showStatusBar, this);
     if (dlg.exec() == QDialog::Accepted) {
         int newMode = dlg.iconMode();
         if (newMode != m_iconMode) {
             m_iconMode = newMode;
             applyIconMode(m_iconMode);
+        }
+        bool newStatus = dlg.statusBarVisible();
+        if (newStatus != m_showStatusBar) {
+            m_showStatusBar = newStatus;
+            applyStatusBarVisible(m_showStatusBar);
         }
     }
 }
@@ -640,6 +645,11 @@ void MainWindow::renameSelected()
     } else {
         QMessageBox::warning(this, "重命名", "重命名失败。");
     }
+}
+
+void MainWindow::applyStatusBarVisible(bool visible)
+{
+    statusBar()->setVisible(visible);
 }
 
 } // namespace FileManager

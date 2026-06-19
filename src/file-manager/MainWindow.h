@@ -44,6 +44,7 @@ private:
     void setupUI();
     void setupConnections();
     void applyIconMode(int mode);
+    void applyStatusBarVisible(bool visible);
     void refreshTree();
     void updateSelectionStatus();
 
@@ -57,7 +58,8 @@ private:
     QPushButton      *m_btnBrowse;
     QPushButton      *m_btnSettings;
     QLabel           *m_statusLabel;
-    int               m_iconMode = 1;
+    int               m_iconMode     = 1;
+    bool              m_showStatusBar = true;
 };
 
 } // namespace FileManager

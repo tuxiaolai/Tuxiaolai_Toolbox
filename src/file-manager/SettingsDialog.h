@@ -9,14 +9,15 @@
 #include <QDialog>
 #include <QButtonGroup>
 #include <QRadioButton>
+#include <QCheckBox>
 
 namespace FileManager {
 
 /** 图标显示模式 */
 enum IconMode {
-    IconReal    = 0,   // 真图标（系统 Shell 提取）
-    IconPreset  = 1,   // 预设图标（按后缀名缓存）
-    IconNone    = 2,   // 无图标
+    IconReal    = 0,
+    IconPreset  = 1,
+    IconNone    = 2,
 };
 
 class SettingsDialog : public QDialog
@@ -24,15 +25,18 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(int currentMode, QWidget *parent = nullptr);
+    explicit SettingsDialog(int currentMode, bool statusBarVisible,
+                            QWidget *parent = nullptr);
 
-    int iconMode() const;
+    int  iconMode()        const;
+    bool statusBarVisible() const;
 
 private:
     QButtonGroup *m_group;
     QRadioButton *m_radioReal;
     QRadioButton *m_radioPreset;
     QRadioButton *m_radioNone;
+    QCheckBox    *m_chkStatusBar;
 };
 
 } // namespace FileManager
