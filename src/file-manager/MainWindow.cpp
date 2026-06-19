@@ -316,7 +316,7 @@ void MainWindow::setupUI()
     m_fileModel = new QFileSystemModel(this);
     m_fileModel->setRootPath(QDir::homePath());
     m_fileModel->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot);
-    m_fileModel->setOption(QFileSystemModel::DontWatch);
+    m_fileModel->setOption(QFileSystemModel::DontWatchForChanges);
 
     m_treeView = new SmoothTreeView();
     m_treeView->setModel(m_fileModel);
