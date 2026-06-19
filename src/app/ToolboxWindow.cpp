@@ -167,6 +167,7 @@ void ToolboxWindow::setupUI()
     // 文件管理器
     m_fileManager = new FileManager::MainWindow();
     m_fileManager->setWindowFlags(Qt::Widget);  // 确保嵌入
+    m_fileManager->setMinimumSize(0, 0);        // 解除最小尺寸限制，允许窗口自由缩放
     sideLay->addWidget(m_fileManager, 1);
 
     mainLayout->addWidget(m_sidePanel);
