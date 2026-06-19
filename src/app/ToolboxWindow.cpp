@@ -37,8 +37,8 @@ QPushButton#sideBtn {
     color: #888;
     border: none;
     font-size: 14px;
-    min-width: 30px;
-    max-width: 30px;
+    min-width: 56px;
+    max-width: 56px;
     min-height: 28px;
 }
 QPushButton#sideBtn:hover {
@@ -93,6 +93,7 @@ CollapsiblePanel::CollapsiblePanel(QWidget *parent)
     m_btnToggle->setObjectName("sideBtn");
     m_btnToggle->setToolTip("折叠侧边栏");
     m_btnToggle->setCursor(Qt::PointingHandCursor);
+    m_btnToggle->setFixedWidth(60);
 
     m_titleLabel = new QLabel(" 文件管理器");
     m_titleLabel->setObjectName("sideTitle");
@@ -112,10 +113,10 @@ CollapsiblePanel::CollapsiblePanel(QWidget *parent)
     // ── 窄按钮条（折叠时显示） ──
     m_narrowBar = new QWidget();
     m_narrowBar->setObjectName("narrowBar");
-    m_narrowBar->setFixedWidth(36);
+    m_narrowBar->setFixedWidth(64);
     auto *barLay = new QVBoxLayout(m_narrowBar);
-    barLay->setContentsMargins(0, 6, 0, 6);
-    barLay->setSpacing(2);
+    barLay->setContentsMargins(2, 6, 2, 6);
+    barLay->setSpacing(4);
 
     m_btnExpand = new QPushButton("▶");
     m_btnExpand->setObjectName("sideBtn");
@@ -159,13 +160,13 @@ void CollapsiblePanel::setCollapsed(bool collapsed)
         m_headerBar->hide();
         m_contentArea->hide();
         m_narrowBar->show();
-        setMinimumWidth(36);
-        setMaximumWidth(36);
+        setMinimumWidth(64);
+        setMaximumWidth(64);
     } else {
         m_narrowBar->hide();
         m_headerBar->show();
         m_contentArea->show();
-        setMinimumWidth(180);
+        setMinimumWidth(200);
         setMaximumWidth(600);
         // 恢复宽度会在外部通过 setSizes 处理
     }
@@ -194,7 +195,7 @@ void ToolboxWindow::setupUI()
     // ── 可折叠侧边栏 ──
     m_sidePanel = new CollapsiblePanel();
     m_sidePanel->setContent(m_fileManager);
-    m_sidePanel->setMinimumWidth(180);
+    m_sidePanel->setMinimumWidth(200);
     m_sidePanel->setMaximumWidth(600);
 
     // ── 右侧内容区 ──
@@ -219,7 +220,7 @@ void ToolboxWindow::setupUI()
     connect(m_sidePanel, &CollapsiblePanel::collapsedChanged, this,
             [this](bool collapsed) {
         if (collapsed) {
-            m_splitter->setSizes({36, m_splitter->width() - 36});
+            m_splitter->setSizes({64, m_splitter->width() - 64});
         } else {
             int w = m_sidePanel->expandedWidth();
             m_splitter->setSizes({w, m_splitter->width() - w - 1});
