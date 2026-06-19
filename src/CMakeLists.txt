@@ -5,6 +5,7 @@ set(MAIN_SOURCES
     main.cpp
     file-manager/MainWindow.cpp
     file-manager/SettingsDialog.cpp
+    file-manager/resources.qrc
 )
 
 set(MAIN_HEADERS
@@ -36,6 +37,7 @@ add_executable(FileManager
     file-manager/MainWindow.h
     file-manager/SettingsDialog.cpp
     file-manager/SettingsDialog.h
+    file-manager/resources.qrc
     file-manager/main_filemanager.cpp
 )
 

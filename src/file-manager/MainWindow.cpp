@@ -212,8 +212,10 @@ void MainWindow::setupUI()
     m_btnBrowse->setObjectName("btnBrowse");
     m_btnBrowse->setCursor(Qt::PointingHandCursor);
 
-    m_btnSettings = new QPushButton(QChar(0x2699));  // ⚙ 齿轮图标
+    m_btnSettings = new QPushButton();
     m_btnSettings->setObjectName("btnSettings");
+    m_btnSettings->setIcon(QIcon(":/icons/settings-dark.svg"));
+    m_btnSettings->setIconSize(QSize(20, 20));
     m_btnSettings->setCursor(Qt::PointingHandCursor);
     m_btnSettings->setToolTip("设置");
 

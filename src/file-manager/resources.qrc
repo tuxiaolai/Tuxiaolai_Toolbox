@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="settings-dark.svg">icons/settings@20x20_dark.svg</file>
+    </qresource>
+</RCC>
