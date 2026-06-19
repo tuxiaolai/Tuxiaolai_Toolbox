@@ -2,24 +2,47 @@
     <qresource prefix="/icons">
         <!-- UI -->
         <file alias="settings-dark.svg">icons/settings@20x20_dark.svg</file>
-        <!-- 文件类型 -->
+
+        <!-- 通用类型 — 浅色 -->
         <file alias="folder.svg">icons/folder.svg</file>
         <file alias="text.svg">icons/text.svg</file>
         <file alias="image.svg">icons/image.svg</file>
         <file alias="application.svg">icons/application.svg</file>
         <file alias="archive.svg">icons/archive.svg</file>
-        <!-- 语言图标 -->
+
+        <!-- 通用类型 — 深色 -->
+        <file alias="folder_dark.svg">icons/folder_dark.svg</file>
+        <file alias="text_dark.svg">icons/text_dark.svg</file>
+        <file alias="image_dark.svg">icons/image_dark.svg</file>
+        <file alias="application_dark.svg">icons/application_dark.svg</file>
+        <file alias="archive_dark.svg">icons/archive_dark.svg</file>
+
+        <!-- 语言图标 — 浅色 -->
         <file alias="c.svg">icons/c.svg</file>
         <file alias="cpp.svg">icons/cpp.svg</file>
         <file alias="h.svg">icons/h.svg</file>
-        <file alias="cmake.svg">icons/cmake.svg</file>
+        <file alias="cmake.svg">icons/CMake.svg</file>
         <file alias="css.svg">icons/css.svg</file>
         <file alias="html.svg">icons/html.svg</file>
         <file alias="java.svg">icons/java.svg</file>
-        <file alias="javascript.svg">icons/javascript.svg</file>
+        <file alias="javascript.svg">icons/js.svg</file>
         <file alias="kotlin.svg">icons/kotlin.svg</file>
-        <file alias="python.svg">icons/python.svg</file>
+        <file alias="python.svg">icons/pythonFile@24x24.svg</file>
         <file alias="qt.svg">icons/qt.svg</file>
-        <file alias="typescript.svg">icons/typescript.svg</file>
+        <file alias="typescript.svg">icons/typeScript.svg</file>
+
+        <!-- 语言图标 — 深色 -->
+        <file alias="c_dark.svg">icons/c_dark.svg</file>
+        <file alias="cpp_dark.svg">icons/cpp_dark.svg</file>
+        <file alias="h_dark.svg">icons/h_dark.svg</file>
+        <file alias="cmake_dark.svg">icons/CMake_dark.svg</file>
+        <file alias="css_dark.svg">icons/css_dark.svg</file>
+        <file alias="html_dark.svg">icons/html_dark.svg</file>
+        <file alias="java_dark.svg">icons/java_dark.svg</file>
+        <file alias="javascript_dark.svg">icons/js_dark.svg</file>
+        <file alias="kotlin_dark.svg">icons/kotlin_dark.svg</file>
+        <file alias="python_dark.svg">icons/pythonFile@24x24_dark.svg</file>
+        <file alias="qt_dark.svg">icons/qt_dark.svg</file>
+        <file alias="typescript_dark.svg">icons/typeScript_dark.svg</file>
     </qresource>
 </RCC>

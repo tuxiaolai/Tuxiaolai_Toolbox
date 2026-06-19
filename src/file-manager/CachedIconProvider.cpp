@@ -3,43 +3,60 @@
  * @brief 预设图标提供器实现
  *
  * 从 Qt 资源加载 JetBrains SVG 图标，按后缀名缓存。
+ * 自动检测系统主题：浅色模式用浅色图标，深色模式用深色图标。
  * 完全离线运行，无 Shell API 调用。
  */
 
 #include "CachedIconProvider.h"
 #include <QFileInfo>
 #include <QIcon>
+#include <QPalette>
+#include <QApplication>
 
 namespace FileManager {
 
-static QIcon loadSvg(const QString &resPath)
+// =========================================================================
+// 主题检测
+// =========================================================================
+static bool isSystemDark()
 {
-    return QIcon(resPath);
+    if (!qApp) return true; // fallback
+    auto bg = qApp->palette().window().color();
+    return bg.lightness() < 160;
+}
+
+// =========================================================================
+// 加载图标（自动适配主题）
+// =========================================================================
+static QIcon loadSvg(const QString &baseName)
+{
+    QString suffix = isSystemDark() ? "_dark" : "";
+    return QIcon(QString(":/icons/%1%2.svg").arg(baseName).arg(suffix));
 }
 
 CachedIconProvider::CachedIconProvider()
 {
     // 通用类型
-    m_cache["__folder__"]      = loadSvg(":/icons/folder.svg");
-    m_cache["__file__"]        = loadSvg(":/icons/text.svg");
-    m_cache["__text__"]        = loadSvg(":/icons/text.svg");
-    m_cache["__image__"]       = loadSvg(":/icons/image.svg");
-    m_cache["__application__"] = loadSvg(":/icons/application.svg");
-    m_cache["__archive__"]     = loadSvg(":/icons/archive.svg");
+    m_cache["__folder__"]      = loadSvg("folder");
+    m_cache["__file__"]        = loadSvg("text");
+    m_cache["__text__"]        = loadSvg("text");
+    m_cache["__image__"]       = loadSvg("image");
+    m_cache["__application__"] = loadSvg("application");
+    m_cache["__archive__"]     = loadSvg("archive");
 
     // 语言专用
-    m_cache["c"]            = loadSvg(":/icons/c.svg");
-    m_cache["cpp"]          = loadSvg(":/icons/cpp.svg");
-    m_cache["h"]            = loadSvg(":/icons/h.svg");
-    m_cache["cmake"]        = loadSvg(":/icons/cmake.svg");
-    m_cache["css"]          = loadSvg(":/icons/css.svg");
-    m_cache["html"]         = loadSvg(":/icons/html.svg");
-    m_cache["java"]         = loadSvg(":/icons/java.svg");
-    m_cache["javascript"]   = loadSvg(":/icons/javascript.svg");
-    m_cache["kotlin"]       = loadSvg(":/icons/kotlin.svg");
-    m_cache["python"]       = loadSvg(":/icons/python.svg");
-    m_cache["qt"]           = loadSvg(":/icons/qt.svg");
-    m_cache["typescript"]   = loadSvg(":/icons/typescript.svg");
+    m_cache["c"]            = loadSvg("c");
+    m_cache["cpp"]          = loadSvg("cpp");
+    m_cache["h"]            = loadSvg("h");
+    m_cache["cmake"]        = loadSvg("cmake");
+    m_cache["css"]          = loadSvg("css");
+    m_cache["html"]         = loadSvg("html");
+    m_cache["java"]         = loadSvg("java");
+    m_cache["javascript"]   = loadSvg("javascript");
+    m_cache["kotlin"]       = loadSvg("kotlin");
+    m_cache["python"]       = loadSvg("python");
+    m_cache["qt"]           = loadSvg("qt");
+    m_cache["typescript"]   = loadSvg("typescript");
 }
 
 QIcon CachedIconProvider::icon(IconType type) const
@@ -114,7 +131,7 @@ QIcon CachedIconProvider::icon(const QFileInfo &info) const
              || ext == "ipynb")
         icon = m_cache.value("python");
 
-    // ── 其他代码文件（回退文本图标） ──
+    // ── 其他代码（回退文本图标） ──
     else if (ext == "go" || ext == "rs" || ext == "swift" || ext == "cs"
              || ext == "rb" || ext == "pl" || ext == "php" || ext == "lua"
              || ext == "r" || ext == "scala" || ext == "dart")
