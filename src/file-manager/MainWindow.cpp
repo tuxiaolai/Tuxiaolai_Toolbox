@@ -16,8 +16,8 @@
 #include <QFileDialog>
 #include <QStyledItemDelegate>
 #include <QStyleOptionViewItem>
-#include <QScroller>
-#include <QScrollerProperties>
+#include <QPropertyAnimation>
+#include <QWheelEvent>
 #include "CachedIconProvider.h"
 #include "SettingsDialog.h"
 
@@ -201,6 +201,55 @@ public:
     }
 };
 
+// ---------------------------------------------------------------------------
+// 平滑滚动树视图
+// ---------------------------------------------------------------------------
+class SmoothTreeView : public QTreeView
+{
+public:
+    explicit SmoothTreeView(QWidget *parent = nullptr)
+        : QTreeView(parent)
+    {
+        setVerticalScrollMode(ScrollPerPixel);
+    }
+
+protected:
+    void wheelEvent(QWheelEvent *event) override
+    {
+        if (!event) return;
+
+        m_scrollRemainder += event->angleDelta().y();
+        int steps = m_scrollRemainder / 120;
+        if (steps == 0) {
+            event->accept();
+            return;
+        }
+        m_scrollRemainder -= steps * 120;
+
+        QScrollBar *bar = verticalScrollBar();
+        int target = bar->value() - steps * 60;
+
+        // 停止上一次动画
+        if (m_anim) {
+            m_anim->stop();
+            delete m_anim;
+        }
+
+        m_anim = new QPropertyAnimation(bar, "value", this);
+        m_anim->setDuration(180);
+        m_anim->setStartValue(bar->value());
+        m_anim->setEndValue(qBound(bar->minimum(), target, bar->maximum()));
+        m_anim->setEasingCurve(QEasingCurve::OutQuad);
+        m_anim->start(QAbstractAnimation::DeleteWhenStopped);
+
+        event->accept();
+    }
+
+private:
+    int m_scrollRemainder = 0;
+    QPropertyAnimation *m_anim = nullptr;
+};
+
 namespace FileManager {
 
 // =========================================================================
@@ -269,7 +318,7 @@ void MainWindow::setupUI()
     m_fileModel->setRootPath(QDir::homePath());
     m_fileModel->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot);
 
-    m_treeView = new QTreeView();
+    m_treeView = new SmoothTreeView();
     m_treeView->setModel(m_fileModel);
     m_treeView->setRootIndex(m_fileModel->index(QDir::homePath()));
     m_treeView->setItemDelegate(new NoTintDelegate(m_treeView));  // 禁止图标变色
@@ -281,14 +330,7 @@ void MainWindow::setupUI()
     m_treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     m_treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_treeView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-    m_treeView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
-    // 动感平滑滚动 + 惯性
-    QScroller::grabGesture(m_treeView, QScroller::LeftMouseButtonGesture);
-    QScroller *scroller = QScroller::scroller(m_treeView);
-    QScrollerProperties prop = scroller->scrollerProperties();
-    prop.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.5);
-    prop.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.8);
-    scroller->setScrollerProperties(prop);
+    // 垂直平滑已在 SmoothTreeView 中配置
     m_treeView->header()->setStretchLastSection(false);
     for (int i = 0; i < m_fileModel->columnCount(); ++i)
         m_treeView->header()->setSectionResizeMode(i, QHeaderView::Interactive);
