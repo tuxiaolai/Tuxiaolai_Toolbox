@@ -572,6 +572,12 @@ public:
         connect(btnBox, &QDialogButtonBox::accepted, this, &QDialog::accept);
         connect(btnBox, &QDialogButtonBox::rejected, this, &QDialog::reject);
         connect(m_edit, &QLineEdit::returnPressed, this, &QDialog::accept);
+
+        // 关键：在构造结束前强制完成布局计算。这样 exec() 内部的
+        // show() 不会用一个未计算过的默认尺寸（38px 高）去调
+        // setGeometry，从而彻底避免 Windows 平台的最小窗口尺寸警告。
+        lay->activate();
+        adjustSize();
     }
 
     QString text() const { return m_edit->text().trimmed(); }
