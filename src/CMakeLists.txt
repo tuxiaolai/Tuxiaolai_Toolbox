@@ -4,10 +4,12 @@
 set(MAIN_SOURCES
     main.cpp
     file-manager/MainWindow.cpp
+    file-manager/SettingsDialog.cpp
 )
 
 set(MAIN_HEADERS
     file-manager/MainWindow.h
+    file-manager/SettingsDialog.h
 )
 
 add_executable(Tuxiaolai_Toolbox ${MAIN_SOURCES} ${MAIN_HEADERS})
@@ -32,6 +34,8 @@ install(TARGETS Tuxiaolai_Toolbox
 add_executable(FileManager
     file-manager/MainWindow.cpp
     file-manager/MainWindow.h
+    file-manager/SettingsDialog.cpp
+    file-manager/SettingsDialog.h
     file-manager/main_filemanager.cpp
 )
 

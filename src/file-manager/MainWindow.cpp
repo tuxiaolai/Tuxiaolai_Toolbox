@@ -14,6 +14,7 @@
 #include <QFileInfo>
 #include <QStatusBar>
 #include <QFileDialog>
+#include "SettingsDialog.h"
 
 // ---------------------------------------------------------------------------
 // 静态工具
@@ -74,6 +75,18 @@ QPushButton#btnBrowse:hover {
 }
 QPushButton#btnBrowse:pressed {
     background-color: #444;
+}
+
+/* ── 设置按钮 ── */
+QPushButton#btnSettings {
+    background-color: transparent;
+    color: #888;
+    border: none;
+    padding: 4px 8px;
+    font-size: 14px;
+}
+QPushButton#btnSettings:hover {
+    color: #ccc;
 }
 
 /* ── 树视图 ── */
@@ -160,7 +173,9 @@ MainWindow::MainWindow(QWidget *parent)
     , m_fileModel(nullptr)
     , m_pathBar(nullptr)
     , m_btnBrowse(nullptr)
+    , m_btnSettings(nullptr)
     , m_statusLabel(nullptr)
+    , m_showIcons(false)
 {
     setStyleSheet(kStyleSheet);
     setupUI();
@@ -198,8 +213,14 @@ void MainWindow::setupUI()
     m_btnBrowse->setObjectName("btnBrowse");
     m_btnBrowse->setCursor(Qt::PointingHandCursor);
 
+    m_btnSettings = new QPushButton(QChar(0x2699));  // ⚙ 齿轮图标
+    m_btnSettings->setObjectName("btnSettings");
+    m_btnSettings->setCursor(Qt::PointingHandCursor);
+    m_btnSettings->setToolTip("设置");
+
     navLayout->addWidget(m_pathBar, 1);
     navLayout->addWidget(m_btnBrowse);
+    navLayout->addWidget(m_btnSettings);
 
     // ── 树视图 ──
     m_fileModel = new QFileSystemModel(this);
@@ -259,6 +280,9 @@ void MainWindow::setupConnections()
             navigateToPath();
         }
     });
+
+    // 设置按钮
+    connect(m_btnSettings, &QPushButton::clicked, this, &MainWindow::openSettings);
 }
 
 // ---------------------------------------------------------------------------
@@ -275,6 +299,40 @@ void MainWindow::navigateToPath()
     } else {
         m_statusLabel->setText(QString("❌ 路径不存在: %1").arg(path));
     }
+}
+
+// ---------------------------------------------------------------------------
+// 设置
+// ---------------------------------------------------------------------------
+void MainWindow::openSettings()
+{
+    SettingsDialog dlg(m_showIcons, this);
+    if (dlg.exec() == QDialog::Accepted) {
+        bool wantIcons = dlg.showIcons();
+        if (wantIcons != m_showIcons) {
+            m_showIcons = wantIcons;
+            applyIconsSetting(m_showIcons);
+        }
+    }
+}
+
+void MainWindow::applyIconsSetting(bool show)
+{
+    if (show) {
+        m_fileModel->setIconProvider(new QFileIconProvider());
+    } else {
+        // 空图标提供器：永远返回空图标，避免 shell 提取
+        class NullIconProvider : public QFileIconProvider {
+        public:
+            QIcon icon(IconType) const override { return QIcon(); }
+            QIcon icon(const QFileInfo &) const override { return QIcon(); }
+        };
+        m_fileModel->setIconProvider(new NullIconProvider());
+    }
+    // 刷新视图（不重扫文件系统）
+    QString root = m_fileModel->rootPath();
+    m_treeView->reset();
+    m_treeView->setRootIndex(m_fileModel->index(root));
 }
 
 } // namespace FileManager
