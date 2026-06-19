@@ -175,7 +175,6 @@ MainWindow::MainWindow(QWidget *parent)
     , m_btnBrowse(nullptr)
     , m_btnSettings(nullptr)
     , m_statusLabel(nullptr)
-    , m_showIcons(false)
 {
     setStyleSheet(kStyleSheet);
     setupUI();
