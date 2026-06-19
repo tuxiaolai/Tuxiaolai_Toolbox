@@ -58,8 +58,9 @@ private:
     QPushButton      *m_btnBrowse;
     QPushButton      *m_btnSettings;
     QLabel           *m_statusLabel;
-    int               m_iconMode     = 1;
-    bool              m_showStatusBar = true;
+    int               m_iconMode      = 1;
+    bool              m_showStatusBar  = true;
+    bool              m_deleteToTrash  = true;
 };
 
 } // namespace FileManager

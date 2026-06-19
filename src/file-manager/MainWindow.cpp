@@ -403,7 +403,7 @@ void MainWindow::navigateToPath()
 // ---------------------------------------------------------------------------
 void MainWindow::openSettings()
 {
-    SettingsDialog dlg(m_iconMode, m_showStatusBar, this);
+    SettingsDialog dlg(m_iconMode, m_showStatusBar, m_deleteToTrash, this);
     if (dlg.exec() == QDialog::Accepted) {
         int newMode = dlg.iconMode();
         if (newMode != m_iconMode) {
@@ -415,6 +415,7 @@ void MainWindow::openSettings()
             m_showStatusBar = newStatus;
             applyStatusBarVisible(m_showStatusBar);
         }
+        m_deleteToTrash = dlg.deleteToTrash();
     }
 }
 
@@ -584,10 +585,13 @@ void MainWindow::deleteSelected()
     for (const auto &idx : sel)
         names << m_fileModel->fileName(idx);
 
+    QString actionHint = m_deleteToTrash ? "将移入回收站。" : "将永久删除，不可恢复！";
+
     int ret = QMessageBox::question(this, "删除确认",
-        QString("确定要删除 %1 个条目吗？\n\n%2\n\n将移入回收站。")
+        QString("确定要删除 %1 个条目吗？\n\n%2\n\n%3")
             .arg(names.size())
-            .arg(names.mid(0, 5).join("\n")),
+            .arg(names.mid(0, 5).join("\n"))
+            .arg(actionHint),
         QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
     if (ret != QMessageBox::Yes) return;
@@ -595,24 +599,33 @@ void MainWindow::deleteSelected()
     int failed = 0;
     for (const auto &idx : sel) {
         QString path = m_fileModel->filePath(idx);
-        QFileInfo info(path);
-        if (info.isDir()) {
-            // 用 Qt 6 的 moveToTrash 递归删除目录
-            if (QFile::moveToTrash(path)) QDir().rmpath(path);
-            // 注意：QFile::moveToTrash 对目录可能不可靠，fallback
-            // 实际上递归目录进回收站需要 OS API
-        }
-        // 对文件和目录都尝试 moveToTrash
-        if (!QFile::moveToTrash(path)) {
-            // Fallback：直接删除
+        bool ok = false;
+
+        if (m_deleteToTrash) {
+            QFileInfo fi(path);
+            if (fi.isDir()) {
+                // 目录移入回收站：先尝试 moveToTrash
+                ok = QFile::moveToTrash(path);
+                if (!ok) {
+                    // fallback 直接删
+                    QDir(path).removeRecursively();
+                    ok = !QFileInfo::exists(path);
+                }
+            } else {
+                ok = QFile::moveToTrash(path);
+            }
+        } else {
+            // 直接删除
             QFileInfo fi(path);
             if (fi.isDir()) {
                 QDir(path).removeRecursively();
+                ok = !QFileInfo::exists(path);
             } else {
-                QFile::remove(path);
+                ok = QFile::remove(path);
             }
         }
-        if (QFileInfo::exists(path))
+
+        if (!ok || QFileInfo::exists(path))
             ++failed;
     }
 

@@ -58,11 +58,12 @@ QPushButton:hover {
 namespace FileManager {
 
 SettingsDialog::SettingsDialog(int currentMode, bool statusBarVisible,
+                               bool deleteToTrash,
                                QWidget *parent)
     : QDialog(parent)
 {
     setWindowTitle("文件管理器 — 设置");
-    setFixedSize(340, 260);
+    setFixedSize(340, 300);
     setStyleSheet(kDlgStyle);
 
     auto *layout = new QVBoxLayout(this);
@@ -105,6 +106,10 @@ SettingsDialog::SettingsDialog(int currentMode, bool statusBarVisible,
     m_chkStatusBar->setChecked(statusBarVisible);
     layout->addWidget(m_chkStatusBar);
 
+    m_chkDeleteToTrash = new QCheckBox("删除时移到回收站");
+    m_chkDeleteToTrash->setChecked(deleteToTrash);
+    layout->addWidget(m_chkDeleteToTrash);
+
     // ── 按钮 ──
     auto *buttonBox = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -122,6 +127,11 @@ int SettingsDialog::iconMode() const
 bool SettingsDialog::statusBarVisible() const
 {
     return m_chkStatusBar->isChecked();
+}
+
+bool SettingsDialog::deleteToTrash() const
+{
+    return m_chkDeleteToTrash->isChecked();
 }
 
 } // namespace FileManager

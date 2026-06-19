@@ -26,10 +26,12 @@ class SettingsDialog : public QDialog
 
 public:
     explicit SettingsDialog(int currentMode, bool statusBarVisible,
+                            bool deleteToTrash,
                             QWidget *parent = nullptr);
 
     int  iconMode()        const;
     bool statusBarVisible() const;
+    bool deleteToTrash()    const;
 
 private:
     QButtonGroup *m_group;
@@ -37,6 +39,7 @@ private:
     QRadioButton *m_radioPreset;
     QRadioButton *m_radioNone;
     QCheckBox    *m_chkStatusBar;
+    QCheckBox    *m_chkDeleteToTrash;
 };
 
 } // namespace FileManager
