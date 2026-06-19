@@ -54,9 +54,14 @@ QIcon CachedIconProvider::icon(const QFileInfo &info) const
         return m_cache.value("__folder__");
 
     QString ext = info.suffix().toLower();
+    QString fileName = info.fileName().toLower();
 
     if (m_cache.contains(ext))
         return m_cache.value(ext);
+
+    // 特殊文件名匹配
+    if (fileName == "cmakelists.txt" || fileName == "cmakelists")
+        return m_cache.value("cmake");
 
     QIcon icon;
 
