@@ -2,8 +2,7 @@
  * @file MainWindow.h
  * @brief 文件管理器 — 主窗口声明
  *
- * 简约现代化的文件浏览器。
- * 路径栏 + 按钮导航到目录，树视图展示目录内容。
+ * 树视图文件浏览 + 右键菜单操作。
  */
 
 #ifndef FILEMANAGER_MAINWINDOW_H
@@ -16,6 +15,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QMenu>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
@@ -30,16 +30,26 @@ public:
     ~MainWindow() override = default;
 
 private slots:
-    /** 导航到路径栏中的目录 */
     void navigateToPath();
-    /** 打开设置对话框 */
     void openSettings();
+
+    // 右键菜单操作
+    void onContextMenu(const QPoint &pos);
+    void newFile();
+    void newFolder();
+    void deleteSelected();
+    void renameSelected();
 
 private:
     void setupUI();
     void setupConnections();
     void applyIconMode(int mode);
     void refreshTree();
+    void updateSelectionStatus();
+
+    // 工具方法
+    QString currentDirectory() const;
+    void refreshCurrentPath();
 
     QTreeView        *m_treeView;
     QFileSystemModel *m_fileModel;
@@ -47,9 +57,9 @@ private:
     QPushButton      *m_btnBrowse;
     QPushButton      *m_btnSettings;
     QLabel           *m_statusLabel;
-    int               m_iconMode = 1;   // 默认：预设图标
+    int               m_iconMode = 1;
 };
 
 } // namespace FileManager
 
-#endif // FILEMANAGER_MAINWINDOW_H
+#endif
