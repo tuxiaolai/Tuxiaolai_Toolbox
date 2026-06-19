@@ -316,7 +316,8 @@ void MainWindow::setupUI()
     m_fileModel = new QFileSystemModel(this);
     m_fileModel->setRootPath(QDir::homePath());
     m_fileModel->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot);
-    m_fileModel->setOption(QFileSystemModel::DontWatchForChanges);
+    m_fileModel->setOption(QFileSystemModel::DontResolveSymlinks);
+    // 不关文件监视 — 保持实时刷新
 
     m_treeView = new SmoothTreeView();
     m_treeView->setModel(m_fileModel);
@@ -530,7 +531,9 @@ static QString inputDialogText(QWidget *parent, const QString &title,
     dlg.setWindowTitle(title);
     dlg.setLabelText(label);
     dlg.setTextValue(defaultValue);
-    dlg.resize(qlonglong(480), qlonglong(dlg.sizeHint().height() + 60));
+    // 先 show 再设大小，避免 exec 内部布局冲突
+    dlg.show();
+    dlg.resize(480, 180);
     if (dlg.exec() != QDialog::Accepted) return {};
     return dlg.textValue().trimmed();
 }
