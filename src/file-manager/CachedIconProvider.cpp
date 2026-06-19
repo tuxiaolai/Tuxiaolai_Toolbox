@@ -144,7 +144,7 @@ QIcon CachedIconProvider::icon(const QFileInfo &info) const
     else if (ext == "txt" || ext == "md" || ext == "log" || ext == "ini"
              || ext == "cfg" || ext == "conf" || ext == "qss" || ext == "yaml"
              || ext == "yml" || ext == "toml" || ext == "json" || ext == "xml"
-             || ext == "svg" || ext == "rst" || ext == "tex")
+             || ext == "rst" || ext == "tex")
         icon = m_cache.value("__text__");
 
     // ── 图片 ──
