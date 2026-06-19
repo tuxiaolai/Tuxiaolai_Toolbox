@@ -25,7 +25,8 @@ CachedIconProvider::CachedIconProvider()
     m_cache["__image__"]       = loadSvg(":/icons/image.svg");
     m_cache["__application__"] = loadSvg(":/icons/application.svg");
     m_cache["__archive__"]     = loadSvg(":/icons/archive.svg");
-    // code 类别复用文本图标
+    m_cache["__cpp__"]         = loadSvg(":/icons/code.svg");
+    m_cache["__python__"]      = loadSvg(":/icons/python.svg");
 }
 
 QIcon CachedIconProvider::icon(IconType type) const
@@ -56,14 +57,24 @@ QIcon CachedIconProvider::icon(const QFileInfo &info) const
              || ext == "gz" || ext == "bz2" || ext == "xz" || ext == "zst")
         icon = m_cache.value("__archive__");
 
+    // C++ 专用图标
     else if (ext == "cpp" || ext == "cxx" || ext == "cc" || ext == "c"
-             || ext == "h" || ext == "hpp" || ext == "hxx"
-             || ext == "java" || ext == "kt" || ext == "kts"
-             || ext == "py" || ext == "js" || ext == "ts" || ext == "jsx"
+             || ext == "h" || ext == "hpp" || ext == "hxx")
+        icon = m_cache.value("__cpp__");
+
+    // Python 专用图标
+    else if (ext == "py")
+        icon = m_cache.value("__python__");
+
+    // 其他代码文件 → 文本图标
+    else if (ext == "java" || ext == "kt" || ext == "kts"
+             || ext == "js" || ext == "ts" || ext == "jsx"
              || ext == "tsx" || ext == "go" || ext == "rs"
-             || ext == "swift" || ext == "cs")
+             || ext == "swift" || ext == "cs" || ext == "rb"
+             || ext == "pl" || ext == "php" || ext == "lua")
         icon = m_cache.value("__text__");
 
+    // 文本/配置文件
     else if (ext == "txt" || ext == "md" || ext == "log" || ext == "ini"
              || ext == "cfg" || ext == "conf" || ext == "qss"
              || ext == "html" || ext == "css" || ext == "json" || ext == "xml"
@@ -72,6 +83,7 @@ QIcon CachedIconProvider::icon(const QFileInfo &info) const
              || ext == "rst" || ext == "tex" || ext == "svg")
         icon = m_cache.value("__text__");
 
+    // 图片
     else if (ext == "png" || ext == "jpg" || ext == "jpeg" || ext == "bmp"
              || ext == "gif" || ext == "ico" || ext == "webp" || ext == "tiff"
              || ext == "tif" || ext == "psd" || ext == "raw")

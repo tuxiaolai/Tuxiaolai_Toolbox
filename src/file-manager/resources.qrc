@@ -7,5 +7,6 @@
         <file alias="application.svg">icons/application.svg</file>
         <file alias="archive.svg">icons/archive.svg</file>
         <file alias="code.svg">icons/code.svg</file>
+        <file alias="python.svg">icons/python.svg</file>
     </qresource>
 </RCC>

@@ -14,6 +14,8 @@
 #include <QFileInfo>
 #include <QStatusBar>
 #include <QFileDialog>
+#include <QStyledItemDelegate>
+#include <QStyleOptionViewItem>
 #include "CachedIconProvider.h"
 #include "SettingsDialog.h"
 
@@ -97,7 +99,6 @@ QTreeView {
     outline: none;
     color: #ccc;
     font-size: 12px;
-    show-decoration-selected: 0;
 }
 QTreeView::item {
     padding: 2px 6px;
@@ -162,6 +163,20 @@ QStatusBar {
     padding: 0 8px;
 }
 )";
+
+// ---------------------------------------------------------------------------
+// 自定义委托：选中时不对图标染色
+// ---------------------------------------------------------------------------
+class NoTintDelegate : public QStyledItemDelegate
+{
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+    void initStyleOption(QStyleOptionViewItem *opt, const QModelIndex &idx) const override
+    {
+        QStyledItemDelegate::initStyleOption(opt, idx);
+        opt->showDecorationSelected = false;
+    }
+};
 
 namespace FileManager {
 
@@ -234,6 +249,7 @@ void MainWindow::setupUI()
     m_treeView = new QTreeView();
     m_treeView->setModel(m_fileModel);
     m_treeView->setRootIndex(m_fileModel->index(QDir::homePath()));
+    m_treeView->setItemDelegate(new NoTintDelegate(m_treeView));  // 禁止图标变色
     m_treeView->setAnimated(true);
     m_treeView->setIndentation(20);
     m_treeView->setAlternatingRowColors(false);
