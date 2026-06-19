@@ -3,8 +3,6 @@
  * @brief 文件管理器 — 主窗口实现
  *
  * 路径栏 + 按钮导航到目录，树视图展示目录层级。
- * 性能优化：QFileSystemModel 在启动时一次性加载文件系统根，
- * 导航只切换 rootIndex，不重复 setRootPath。
  */
 
 #include "MainWindow.h"
@@ -167,7 +165,6 @@ MainWindow::MainWindow(QWidget *parent)
     setStyleSheet(kStyleSheet);
     setupUI();
     setupConnections();
-    navigateToPath();
 }
 
 // ---------------------------------------------------------------------------
@@ -204,17 +201,14 @@ void MainWindow::setupUI()
     navLayout->addWidget(m_pathBar, 1);
     navLayout->addWidget(m_btnBrowse);
 
-    // ── 树视图（模型只加载一次） ──
+    // ── 树视图 ──
     m_fileModel = new QFileSystemModel(this);
-    // 空字符串 = 加载整个文件系统根，后续导航只切换 rootIndex
-    m_fileModel->setRootPath("");
+    m_fileModel->setRootPath(QDir::homePath());
     m_fileModel->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot);
-    m_fileModel->setOption(QFileSystemModel::DontResolveSymlinks, true);
-    // 不监视非必要变更，降低文件系统事件开销
-    m_fileModel->setResolveSymlinks(false);
 
     m_treeView = new QTreeView();
     m_treeView->setModel(m_fileModel);
+    m_treeView->setRootIndex(m_fileModel->index(QDir::homePath()));
     m_treeView->setAnimated(true);
     m_treeView->setIndentation(20);
     m_treeView->setAlternatingRowColors(false);
@@ -254,16 +248,6 @@ void MainWindow::setupConnections()
                 .arg(::formatFileSize(info.size())));
     });
 
-    // 树节点双击 → 若是目录则导航进入（仅切 rootIndex，不重载模型）
-    connect(m_treeView, &QTreeView::doubleClicked, this, [this](const QModelIndex &index) {
-        if (!index.isValid()) return;
-        QString path = m_fileModel->filePath(index);
-        if (QFileInfo(path).isDir()) {
-            m_treeView->setRootIndex(index);
-            m_statusLabel->setText(QString("📁 %1").arg(path));
-        }
-    });
-
     // 路径栏回车 → 导航
     connect(m_pathBar, &QLineEdit::returnPressed, this, &MainWindow::navigateToPath);
 
@@ -279,15 +263,13 @@ void MainWindow::setupConnections()
 
 // ---------------------------------------------------------------------------
 // 导航到路径栏中的目录
-// 只切换 rootIndex，不重调 setRootPath，避免文件系统重扫
 // ---------------------------------------------------------------------------
 void MainWindow::navigateToPath()
 {
     QString path = m_pathBar->text().trimmed();
     QDir dir(path);
     if (dir.exists()) {
-        // 只切换可见根索引，不重新加载模型
-        QModelIndex idx = m_fileModel->index(path);
+        QModelIndex idx = m_fileModel->setRootPath(path);
         m_treeView->setRootIndex(idx);
         m_statusLabel->setText(QString("📁 %1").arg(dir.absolutePath()));
     } else {
