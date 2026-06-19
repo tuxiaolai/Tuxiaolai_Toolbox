@@ -26,13 +26,16 @@ class SettingsDialog : public QDialog
 
 public:
     explicit SettingsDialog(int currentMode, bool statusBarVisible,
-                            bool deleteToTrash, bool navBarVisible,
+                            bool deleteToTrash,
+                            bool showSizeCol, bool showTypeCol, bool showDateCol,
                             QWidget *parent = nullptr);
 
     int  iconMode()        const;
     bool statusBarVisible() const;
     bool deleteToTrash()    const;
-    bool navBarVisible()    const;
+    bool showSizeColumn()   const;
+    bool showTypeColumn()   const;
+    bool showDateColumn()   const;
 
 private:
     QButtonGroup *m_group;
@@ -41,7 +44,9 @@ private:
     QRadioButton *m_radioNone;
     QCheckBox    *m_chkStatusBar;
     QCheckBox    *m_chkDeleteToTrash;
-    QCheckBox    *m_chkNavBar;
+    QCheckBox    *m_chkSizeCol;
+    QCheckBox    *m_chkTypeCol;
+    QCheckBox    *m_chkDateCol;
 };
 
 } // namespace FileManager

@@ -289,9 +289,9 @@ void MainWindow::setupUI()
     setCentralWidget(centralWidget);
 
     // ── 导航栏（路径栏 + 浏览按钮） ──
-    m_navBar = new QWidget();
-    m_navBar->setObjectName("navBar");
-    auto *navLayout = new QHBoxLayout(m_navBar);
+    auto *navBar = new QWidget();
+    navBar->setObjectName("navBar");
+    auto *navLayout = new QHBoxLayout(navBar);
     navLayout->setContentsMargins(8, 6, 8, 6);
     navLayout->setSpacing(6);
 
@@ -345,8 +345,11 @@ void MainWindow::setupUI()
     m_statusLabel = new QLabel("就绪");
     statusBar()->addWidget(m_statusLabel);
 
+    // ── 初始应用列显隐 ──
+    applyColumnVisibility();
+
     // ── 组合布局 ──
-    mainLayout->addWidget(m_navBar);
+    mainLayout->addWidget(navBar);
     mainLayout->addWidget(m_treeView, 1);
 }
 
@@ -417,7 +420,7 @@ void MainWindow::navigateToPath()
 void MainWindow::openSettings()
 {
     SettingsDialog dlg(m_iconMode, m_showStatusBar, m_deleteToTrash,
-                       m_showNavBar, this);
+                       m_showSizeCol, m_showTypeCol, m_showDateCol, this);
     if (dlg.exec() == QDialog::Accepted) {
         int newMode = dlg.iconMode();
         if (newMode != m_iconMode) {
@@ -429,12 +432,23 @@ void MainWindow::openSettings()
             m_showStatusBar = newStatus;
             applyStatusBarVisible(m_showStatusBar);
         }
-        bool newNav = dlg.navBarVisible();
-        if (newNav != m_showNavBar) {
-            m_showNavBar = newNav;
-            applyNavBarVisible(m_showNavBar);
-        }
         m_deleteToTrash = dlg.deleteToTrash();
+
+        bool colsChanged = false;
+        if (dlg.showSizeColumn() != m_showSizeCol) {
+            m_showSizeCol = dlg.showSizeColumn();
+            colsChanged = true;
+        }
+        if (dlg.showTypeColumn() != m_showTypeCol) {
+            m_showTypeCol = dlg.showTypeColumn();
+            colsChanged = true;
+        }
+        if (dlg.showDateColumn() != m_showDateCol) {
+            m_showDateCol = dlg.showDateColumn();
+            colsChanged = true;
+        }
+        if (colsChanged)
+            applyColumnVisibility();
     }
 }
 
@@ -779,9 +793,16 @@ void MainWindow::renameSelected()
     }
 }
 
-void MainWindow::applyNavBarVisible(bool visible)
+void MainWindow::applyColumnVisibility()
 {
-    m_navBar->setVisible(visible);
+    // QFileSystemModel 列索引固定：
+    //   0 = 名称（始终可见）
+    //   1 = 大小
+    //   2 = 类型
+    //   3 = 修改日期
+    m_treeView->setColumnHidden(1, !m_showSizeCol);
+    m_treeView->setColumnHidden(2, !m_showTypeCol);
+    m_treeView->setColumnHidden(3, !m_showDateCol);
 }
 
 void MainWindow::applyStatusBarVisible(bool visible)

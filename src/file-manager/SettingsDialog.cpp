@@ -58,12 +58,13 @@ QPushButton:hover {
 namespace FileManager {
 
 SettingsDialog::SettingsDialog(int currentMode, bool statusBarVisible,
-                               bool deleteToTrash, bool navBarVisible,
+                               bool deleteToTrash,
+                               bool showSizeCol, bool showTypeCol, bool showDateCol,
                                QWidget *parent)
     : QDialog(parent)
 {
     setWindowTitle("文件管理器 — 设置");
-    setFixedSize(340, 340);
+    setFixedSize(340, 380);
     setStyleSheet(kDlgStyle);
 
     auto *layout = new QVBoxLayout(this);
@@ -101,7 +102,7 @@ SettingsDialog::SettingsDialog(int currentMode, bool statusBarVisible,
     layout->addWidget(sep);
     layout->addSpacing(4);
 
-    // ── 状态栏开关 ──
+    // ── 状态栏 / 删除模式 ──
     m_chkStatusBar = new QCheckBox("显示状态栏");
     m_chkStatusBar->setChecked(statusBarVisible);
     layout->addWidget(m_chkStatusBar);
@@ -118,10 +119,20 @@ SettingsDialog::SettingsDialog(int currentMode, bool statusBarVisible,
     layout->addWidget(sep2);
     layout->addSpacing(4);
 
-    // ── 导航栏开关 ──
-    m_chkNavBar = new QCheckBox("显示上方导航栏");
-    m_chkNavBar->setChecked(navBarVisible);
-    layout->addWidget(m_chkNavBar);
+    // ── 表头列显隐 ──
+    layout->addWidget(new QLabel("树视图显示列："));
+
+    m_chkSizeCol = new QCheckBox("显示「大小」列");
+    m_chkSizeCol->setChecked(showSizeCol);
+    layout->addWidget(m_chkSizeCol);
+
+    m_chkTypeCol = new QCheckBox("显示「类型」列");
+    m_chkTypeCol->setChecked(showTypeCol);
+    layout->addWidget(m_chkTypeCol);
+
+    m_chkDateCol = new QCheckBox("显示「修改日期」列");
+    m_chkDateCol->setChecked(showDateCol);
+    layout->addWidget(m_chkDateCol);
 
     // ── 按钮 ──
     auto *buttonBox = new QDialogButtonBox(
@@ -147,9 +158,19 @@ bool SettingsDialog::deleteToTrash() const
     return m_chkDeleteToTrash->isChecked();
 }
 
-bool SettingsDialog::navBarVisible() const
+bool SettingsDialog::showSizeColumn() const
 {
-    return m_chkNavBar->isChecked();
+    return m_chkSizeCol->isChecked();
+}
+
+bool SettingsDialog::showTypeColumn() const
+{
+    return m_chkTypeCol->isChecked();
+}
+
+bool SettingsDialog::showDateColumn() const
+{
+    return m_chkDateCol->isChecked();
 }
 
 } // namespace FileManager

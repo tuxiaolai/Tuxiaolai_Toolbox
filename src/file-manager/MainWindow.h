@@ -30,7 +30,8 @@ public:
     ~MainWindow() override = default;
 
 signals:
-    /// 双击非目录文件时发出，携带文件绝对路径
+    /// 双击非目录文件时发出，携带文件绝对路径。
+    /// 供外部项目 connect 使用，例如 IDE 打开、预览等。
     void fileActivated(const QString &filePath);
 
 private slots:
@@ -49,7 +50,7 @@ private:
     void setupConnections();
     void applyIconMode(int mode);
     void applyStatusBarVisible(bool visible);
-    void applyNavBarVisible(bool visible);
+    void applyColumnVisibility();
     void refreshTree();
     void updateSelectionStatus();
 
@@ -64,11 +65,12 @@ private:
     QPushButton      *m_btnBrowse;
     QPushButton      *m_btnSettings;
     QLabel           *m_statusLabel;
-    int               m_iconMode      = 1;
+    int               m_iconMode       = 1;
     bool              m_showStatusBar  = true;
     bool              m_deleteToTrash  = true;
-    bool              m_showNavBar     = true;
-    QWidget          *m_navBar        = nullptr;
+    bool              m_showSizeCol    = true;
+    bool              m_showTypeCol    = true;
+    bool              m_showDateCol    = true;
 };
 
 } // namespace FileManager
