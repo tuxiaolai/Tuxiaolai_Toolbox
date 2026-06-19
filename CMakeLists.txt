@@ -22,6 +22,7 @@ find_package(Qt6 REQUIRED COMPONENTS
     Gui
     Widgets
     Network
+    Svg
 )
 
 # 启用自动 MOC、UIC、RCC

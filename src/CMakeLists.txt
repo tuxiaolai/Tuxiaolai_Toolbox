@@ -22,6 +22,7 @@ target_link_libraries(Tuxiaolai_Toolbox PRIVATE
     Qt6::Gui
     Qt6::Widgets
     Qt6::Network
+    Qt6::Svg
 )
 
 install(TARGETS Tuxiaolai_Toolbox
@@ -49,4 +50,5 @@ target_link_libraries(FileManager PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
+    Qt6::Svg
 )
