@@ -119,6 +119,8 @@ QIcon CachedIconProvider::icon(const QFileInfo &info) const
         icon = m_cache.value("javascript");
     else if (ext == "ts" || ext == "tsx")
         icon = m_cache.value("typescript");
+    else if (ext == "md" || ext == "mdx" || ext == "markdown")
+        icon = m_cache.value("markdown");
 
     // ── Java / Kotlin ──
     else if (ext == "java" || ext == "class" || ext == "jar")

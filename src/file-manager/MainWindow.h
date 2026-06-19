@@ -84,6 +84,7 @@ private:
     bool              m_showSizeCol    = true;
     bool              m_showTypeCol    = true;
     bool              m_showDateCol    = true;
+    int               m_scrollSpeed    = 180;
 };
 
 } // namespace FileManager

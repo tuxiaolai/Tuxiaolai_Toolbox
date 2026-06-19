@@ -30,6 +30,7 @@
         <file alias="python.svg">icons/pythonFile@24x24.svg</file>
         <file alias="qt.svg">icons/qt.svg</file>
         <file alias="typescript.svg">icons/typeScript.svg</file>
+        <file alias="markdown.svg">icons/markdown.svg</file>
 
         <!-- 语言图标 — 深色 -->
         <file alias="c_dark.svg">icons/c_dark.svg</file>
@@ -44,17 +45,24 @@
         <file alias="python_dark.svg">icons/pythonFile@24x24_dark.svg</file>
         <file alias="qt_dark.svg">icons/qt_dark.svg</file>
         <file alias="typescript_dark.svg">icons/typeScript_dark.svg</file>
+        <file alias="markdown_dark.svg">icons/markdown_dark.svg</file>
 
         <!-- 操作图标 — 浅色 -->
         <file alias="addFile.svg">icons/addFile.svg</file>
         <file alias="addDirectory.svg">icons/addDirectory.svg</file>
         <file alias="edit.svg">icons/edit.svg</file>
         <file alias="delete.svg">icons/delete.svg</file>
+        <file alias="copy.svg">icons/copy.svg</file>
+        <file alias="cut.svg">icons/cut.svg</file>
+        <file alias="paste.svg">icons/paste.svg</file>
 
         <!-- 操作图标 — 深色 -->
         <file alias="addFile_dark.svg">icons/addFile_dark.svg</file>
         <file alias="addDirectory_dark.svg">icons/addDirectory_dark.svg</file>
         <file alias="edit_dark.svg">icons/edit_dark.svg</file>
         <file alias="delete_dark.svg">icons/delete_dark.svg</file>
+        <file alias="copy_dark.svg">icons/copy_dark.svg</file>
+        <file alias="cut_dark.svg">icons/cut_dark.svg</file>
+        <file alias="paste_dark.svg">icons/paste_dark.svg</file>
     </qresource>
 </RCC>

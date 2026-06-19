@@ -18,6 +18,7 @@
 #include <QStyleOptionViewItem>
 #include <QPropertyAnimation>
 #include <QWheelEvent>
+#include <QMouseEvent>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 #include <QLabel>
@@ -212,7 +213,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-// 平滑滚动树视图
+// 平滑滚动树视图（滚轮动画 + 中键拖拽滚动）
 // ---------------------------------------------------------------------------
 class SmoothTreeView : public QTreeView
 {
@@ -222,9 +223,14 @@ public:
         , m_anim(new QPropertyAnimation(verticalScrollBar(), "value", this))
     {
         setVerticalScrollMode(ScrollPerPixel);
+        setMouseTracking(true);
         m_anim->setEasingCurve(QEasingCurve::OutQuad);
         m_anim->setDuration(180);
     }
+
+    /// 设置滚轮动画持续时间（毫秒），50=极快 400=极慢
+    void setScrollSpeed(int ms) { m_anim->setDuration(qBound(50, ms, 400)); }
+    int  scrollSpeed() const    { return m_anim->duration(); }
 
 protected:
     void wheelEvent(QWheelEvent *event) override
@@ -251,9 +257,48 @@ protected:
         event->accept();
     }
 
+    void mousePressEvent(QMouseEvent *event) override
+    {
+        if (event->button() == Qt::MiddleButton) {
+            m_midPressed = true;
+            m_midOrigin = event->pos();
+            m_midScrollAt = verticalScrollBar()->value();
+            setCursor(Qt::SizeVerCursor);
+            event->accept();
+            return;
+        }
+        QTreeView::mousePressEvent(event);
+    }
+
+    void mouseReleaseEvent(QMouseEvent *event) override
+    {
+        if (event->button() == Qt::MiddleButton && m_midPressed) {
+            m_midPressed = false;
+            setCursor(Qt::ArrowCursor);
+            event->accept();
+            return;
+        }
+        QTreeView::mouseReleaseEvent(event);
+    }
+
+    void mouseMoveEvent(QMouseEvent *event) override
+    {
+        if (m_midPressed) {
+            int dy = m_midOrigin.y() - event->pos().y();
+            QScrollBar *bar = verticalScrollBar();
+            bar->setValue(m_midScrollAt + dy);
+            event->accept();
+            return;
+        }
+        QTreeView::mouseMoveEvent(event);
+    }
+
 private:
     int m_scrollRemainder = 0;
     QPropertyAnimation *m_anim;
+    bool m_midPressed = false;
+    QPoint m_midOrigin;
+    int m_midScrollAt = 0;
 };
 
 namespace FileManager {
@@ -442,7 +487,8 @@ void MainWindow::navigateToPath()
 void MainWindow::openSettings()
 {
     SettingsDialog dlg(m_iconMode, m_showStatusBar, m_deleteToTrash,
-                       m_showSizeCol, m_showTypeCol, m_showDateCol, this);
+                       m_showSizeCol, m_showTypeCol, m_showDateCol,
+                       m_scrollSpeed, this);
     if (dlg.exec() == QDialog::Accepted) {
         int newMode = dlg.iconMode();
         if (newMode != m_iconMode) {
@@ -471,6 +517,12 @@ void MainWindow::openSettings()
         }
         if (colsChanged)
             applyColumnVisibility();
+
+        int newSpeed = dlg.scrollSpeed();
+        if (newSpeed != m_scrollSpeed) {
+            m_scrollSpeed = newSpeed;
+            static_cast<SmoothTreeView*>(m_treeView)->setScrollSpeed(m_scrollSpeed);
+        }
     }
 }
 

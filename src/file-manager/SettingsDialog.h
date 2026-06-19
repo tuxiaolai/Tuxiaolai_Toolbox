@@ -10,6 +10,7 @@
 #include <QButtonGroup>
 #include <QRadioButton>
 #include <QCheckBox>
+#include <QSlider>
 
 namespace FileManager {
 
@@ -28,6 +29,7 @@ public:
     explicit SettingsDialog(int currentMode, bool statusBarVisible,
                             bool deleteToTrash,
                             bool showSizeCol, bool showTypeCol, bool showDateCol,
+                            int scrollSpeed,
                             QWidget *parent = nullptr);
 
     int  iconMode()        const;
@@ -36,6 +38,7 @@ public:
     bool showSizeColumn()   const;
     bool showTypeColumn()   const;
     bool showDateColumn()   const;
+    int  scrollSpeed()      const;
 
 private:
     QButtonGroup *m_group;
@@ -47,6 +50,8 @@ private:
     QCheckBox    *m_chkSizeCol;
     QCheckBox    *m_chkTypeCol;
     QCheckBox    *m_chkDateCol;
+    QSlider      *m_sliderScroll;
+    QLabel       *m_lblScrollVal;
 };
 
 } // namespace FileManager

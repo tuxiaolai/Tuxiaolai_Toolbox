@@ -60,11 +60,12 @@ namespace FileManager {
 SettingsDialog::SettingsDialog(int currentMode, bool statusBarVisible,
                                bool deleteToTrash,
                                bool showSizeCol, bool showTypeCol, bool showDateCol,
+                               int scrollSpeed,
                                QWidget *parent)
     : QDialog(parent)
 {
     setWindowTitle("文件管理器 — 设置");
-    setFixedSize(340, 380);
+    setFixedSize(360, 470);
     setStyleSheet(kDlgStyle);
 
     auto *layout = new QVBoxLayout(this);
@@ -134,6 +135,33 @@ SettingsDialog::SettingsDialog(int currentMode, bool statusBarVisible,
     m_chkDateCol->setChecked(showDateCol);
     layout->addWidget(m_chkDateCol);
 
+    // ── 分隔线 ──
+    auto *sep3 = new QFrame();
+    sep3->setObjectName("separator");
+    sep3->setFrameShape(QFrame::HLine);
+    layout->addSpacing(4);
+    layout->addWidget(sep3);
+    layout->addSpacing(4);
+
+    // ── 滚动速度 ──
+    layout->addWidget(new QLabel("滚轮动画速度："));
+
+    m_sliderScroll = new QSlider(Qt::Horizontal);
+    m_sliderScroll->setRange(50, 400);
+    m_sliderScroll->setValue(scrollSpeed);
+    m_sliderScroll->setTickPosition(QSlider::TicksBelow);
+    m_sliderScroll->setTickInterval(50);
+    layout->addWidget(m_sliderScroll);
+
+    m_lblScrollVal = new QLabel(QString::number(scrollSpeed) + " ms");
+    m_lblScrollVal->setAlignment(Qt::AlignCenter);
+    layout->addWidget(m_lblScrollVal);
+
+    // 滑块值变化时更新标签
+    connect(m_sliderScroll, &QSlider::valueChanged, this, [this](int v) {
+        m_lblScrollVal->setText(QString::number(v) + " ms");
+    });
+
     // ── 按钮 ──
     auto *buttonBox = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -171,6 +199,11 @@ bool SettingsDialog::showTypeColumn() const
 bool SettingsDialog::showDateColumn() const
 {
     return m_chkDateCol->isChecked();
+}
+
+int SettingsDialog::scrollSpeed() const
+{
+    return m_sliderScroll->value();
 }
 
 } // namespace FileManager
