@@ -18,7 +18,6 @@
 #include <QStyleOptionViewItem>
 #include <QPropertyAnimation>
 #include <QWheelEvent>
-#include <QMouseEvent>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 #include <QLabel>
@@ -213,7 +212,7 @@ public:
 };
 
 // ---------------------------------------------------------------------------
-// 平滑滚动树视图（滚轮动画 + 中键拖拽滚动）
+// 平滑滚动树视图（滚轮动画）
 // ---------------------------------------------------------------------------
 class SmoothTreeView : public QTreeView
 {
@@ -223,7 +222,6 @@ public:
         , m_anim(new QPropertyAnimation(verticalScrollBar(), "value", this))
     {
         setVerticalScrollMode(ScrollPerPixel);
-        setMouseTracking(true);
         m_anim->setEasingCurve(QEasingCurve::OutQuad);
         m_anim->setDuration(100);   // 固定动画时长，不随步长变化
     }
@@ -257,49 +255,10 @@ protected:
         event->accept();
     }
 
-    void mousePressEvent(QMouseEvent *event) override
-    {
-        if (event->button() == Qt::MiddleButton) {
-            m_midPressed = true;
-            m_midOrigin = event->pos();
-            m_midScrollAt = verticalScrollBar()->value();
-            setCursor(Qt::SizeVerCursor);
-            event->accept();
-            return;
-        }
-        QTreeView::mousePressEvent(event);
-    }
-
-    void mouseReleaseEvent(QMouseEvent *event) override
-    {
-        if (event->button() == Qt::MiddleButton && m_midPressed) {
-            m_midPressed = false;
-            setCursor(Qt::ArrowCursor);
-            event->accept();
-            return;
-        }
-        QTreeView::mouseReleaseEvent(event);
-    }
-
-    void mouseMoveEvent(QMouseEvent *event) override
-    {
-        if (m_midPressed) {
-            int dy = m_midOrigin.y() - event->pos().y();
-            QScrollBar *bar = verticalScrollBar();
-            bar->setValue(m_midScrollAt + dy);
-            event->accept();
-            return;
-        }
-        QTreeView::mouseMoveEvent(event);
-    }
-
 private:
     int m_scrollRemainder = 0;
     int m_scrollStep = 60;
     QPropertyAnimation *m_anim;
-    bool m_midPressed = false;
-    QPoint m_midOrigin;
-    int m_midScrollAt = 0;
 };
 
 namespace FileManager {
