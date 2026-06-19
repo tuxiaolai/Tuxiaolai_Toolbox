@@ -46,31 +46,30 @@ QMainWindow {
 QLineEdit#pathBar {
     background-color: #252525;
     color: #e0e0e0;
-    border: 1px solid #333;
-    border-radius: 0;
-    padding: 8px 12px;
-    font-size: 12.5px;
+    border: none;
+    border-bottom: 1px solid #333;
+    padding: 6px 10px;
+    font-size: 12px;
     font-family: "Consolas", "Microsoft YaHei UI", monospace;
 }
 
 QLineEdit#pathBar:focus {
-    border: 1px solid #888;
+    border-bottom: 1px solid #888;
 }
 
 /* ── 树视图 ── */
 QTreeView {
     background-color: #1e1e1e;
-    alternate-background-color: #222;
     border: none;
     outline: none;
     color: #ccc;
-    font-size: 12.5px;
+    font-size: 12px;
     font-family: "Segoe UI", "Microsoft YaHei UI", sans-serif;
 }
 
 QTreeView::item {
-    padding: 4px 6px;
-    min-height: 24px;
+    padding: 2px 6px;
+    min-height: 20px;
     border-radius: 0;
 }
 
@@ -95,15 +94,20 @@ QTreeView::branch:open:has-children:has-siblings {
     image: none;
 }
 
-/* ── 表头 ── */
+/* ── 表头（列分隔线 + 可拖动）─ */
 QHeaderView::section {
     background-color: #252525;
     color: #999;
     border: none;
+    border-right: 1px solid #333;
     border-bottom: 1px solid #333;
-    padding: 4px 8px;
+    padding: 3px 6px;
     font-size: 11px;
     font-weight: 600;
+}
+
+QHeaderView::section:last {
+    border-right: none;
 }
 
 /* ── 滚动条 ── */
@@ -187,7 +191,7 @@ void MainWindow::setupUI()
     m_treeView->setRootIndex(m_fileModel->index(QDir::homePath()));
     m_treeView->setAnimated(true);
     m_treeView->setIndentation(20);
-    m_treeView->setAlternatingRowColors(true);
+    m_treeView->setAlternatingRowColors(false);
     m_treeView->setSortingEnabled(true);
     m_treeView->sortByColumn(0, Qt::AscendingOrder);
     m_treeView->setHeaderHidden(false);
@@ -196,9 +200,11 @@ void MainWindow::setupUI()
     m_treeView->setContextMenuPolicy(Qt::NoContextMenu);
     m_treeView->setDragDropMode(QAbstractItemView::NoDragDrop);
     m_treeView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
-    m_treeView->header()->setStretchLastSection(true);
-    m_treeView->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    m_treeView->setColumnWidth(0, 260);
+    // 所有列可拖动缩放
+    m_treeView->header()->setStretchLastSection(false);
+    for (int i = 0; i < m_fileModel->columnCount(); ++i)
+        m_treeView->header()->setSectionResizeMode(i, QHeaderView::Interactive);
+    m_treeView->setColumnWidth(0, 240);
 
     // ── 状态栏 ──
     m_statusLabel = new QLabel("就绪");
