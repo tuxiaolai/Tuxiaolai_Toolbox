@@ -11,7 +11,7 @@
 |--------|------|----------|
 | `folder.svg` | 文件夹 | — |
 | `text.svg` | 通用文本 | 回退文本类 |
-| `image.svg` | 图片 | png, jpg, gif, webp, bmp, ico, tiff, psd, raw, avif |
+| `image.svg` | 图片 | png, jpg, gif, webp, bmp, ico, tiff, psd, raw, avif, svg |
 | `application.svg` | 可执行程序 | exe, lnk, bat, cmd, dll, msi |
 | `archive.svg` | 压缩包 | zip, rar, 7z, tar, gz, bz2, xz, zst |
 
@@ -28,6 +28,7 @@
 | `java.svg` | Java | java, class, jar |
 | `javascript.svg` | JavaScript | js, jsx, mjs, cjs |
 | `kotlin.svg` | Kotlin | kt, kts, ktm |
+| `markdown.svg` | Markdown | md, mdx, markdown |
 | `python.svg` | Python | py, pyw, pyx, pxd, ipynb |
 | `qt.svg` | Qt | pro, pri, prf, qml, qrc |
 | `typescript.svg` | TypeScript | ts, tsx |
@@ -36,15 +37,28 @@
 
 go, rs, swift, cs, rb, pl, php, lua, r, scala, dart
 
+### 菜单操作图标
+
+| 文件名 | 说明 |
+|--------|------|
+| `addFile.svg` | 新建文件 |
+| `addDirectory.svg` | 新建文件夹 |
+| `copy.svg` | 复制 |
+| `cut.svg` | 剪切 |
+| `paste.svg` | 粘贴 |
+| `edit.svg` | 重命名 |
+| `delete.svg` | 删除 |
+
 ## 添加新图标
 
 1. 下载 SVG **暗色主题**图标到 `icons/` 目录
 2. 重命名为简洁英文名（如 `rust.svg`）
-3. 在 `resources.qrc` 中添加资源条目
-4. 在 `CachedIconProvider.cpp` 的构造函数中加载 `m_cache["rust"] = loadSvg(":/icons/rust.svg")`
+3. 在 `resources.qrc` 中添加资源条目（浅色 + `_dark` 两份）
+4. 在 `CachedIconProvider.cpp` 的构造函数中加载 `m_cache["rust"] = loadSvg("rust")`
 5. 在 `icon(const QFileInfo &)` 中添加后缀名匹配分支
 
 > 注意：图标尺寸建议 16×16 或 20×20 等整数倍。SVG 矢量缩放无损失。
+> 每类图标需要两个文件：`xxx.svg`（浅色主题）和 `xxx_dark.svg`（深色主题）。
 
 ## 许可证
 
