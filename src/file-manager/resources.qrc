@@ -1,12 +1,25 @@
 <RCC>
     <qresource prefix="/icons">
+        <!-- UI -->
         <file alias="settings-dark.svg">icons/settings@20x20_dark.svg</file>
+        <!-- 文件类型 -->
         <file alias="folder.svg">icons/folder.svg</file>
         <file alias="text.svg">icons/text.svg</file>
         <file alias="image.svg">icons/image.svg</file>
         <file alias="application.svg">icons/application.svg</file>
         <file alias="archive.svg">icons/archive.svg</file>
-        <file alias="code.svg">icons/code.svg</file>
+        <!-- 语言图标 -->
+        <file alias="c.svg">icons/c.svg</file>
+        <file alias="cpp.svg">icons/cpp.svg</file>
+        <file alias="h.svg">icons/h.svg</file>
+        <file alias="cmake.svg">icons/cmake.svg</file>
+        <file alias="css.svg">icons/css.svg</file>
+        <file alias="html.svg">icons/html.svg</file>
+        <file alias="java.svg">icons/java.svg</file>
+        <file alias="javascript.svg">icons/javascript.svg</file>
+        <file alias="kotlin.svg">icons/kotlin.svg</file>
         <file alias="python.svg">icons/python.svg</file>
+        <file alias="qt.svg">icons/qt.svg</file>
+        <file alias="typescript.svg">icons/typescript.svg</file>
     </qresource>
 </RCC>
