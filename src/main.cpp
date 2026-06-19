@@ -2,17 +2,14 @@
  * @file main.cpp
  * @brief Tu Toolbox（兔小赖的工具箱）— 主入口
  *
- * 组合入口，可在此启动各个工具模块。
- * 每个工具模块也有自己的独立入口（如 main_filemanager.cpp）。
+ * 启动工具箱主窗口，左侧文件管理器可折叠侧边栏 + 右侧工具内容区。
  */
 
 #include <QApplication>
 #include <QtGlobal>
-#include "file-manager/MainWindow.h"
+#include "app/ToolboxWindow.h"
 
-// 过滤 QFileSystemWatcher 在被监视目录变为不可访问（删除/权限变更/盘符移除）
-// 时输出的 "FindNextChangeNotification failed ... (拒绝访问。)" 无害警告。
-// 其余消息照常转发给默认处理器。
+// 过滤 QFileSystemWatcher 无害警告
 static QtMessageHandler g_defaultMsgHandler = nullptr;
 static void toolboxMsgFilter(QtMsgType type, const QMessageLogContext &ctx,
                              const QString &msg)
@@ -31,10 +28,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     g_defaultMsgHandler = qInstallMessageHandler(toolboxMsgFilter);
 
-    // ----------------------------------------------------------
-    // 启动文件管理器（后续改为模块选择/主面板）
-    // ----------------------------------------------------------
-    FileManager::MainWindow window;
+    ToolboxWindow window;
     window.show();
 
     return app.exec();
