@@ -534,6 +534,31 @@ static QString inputDialogText(QWidget *parent, const QString &title,
     return dlg.textValue().trimmed();
 }
 
+// 辅助：消除 QMessageBox 几何警告
+static void showMsgBox(QWidget *parent, QMessageBox::Icon icon,
+                        const QString &title, const QString &text)
+{
+    QMessageBox msg(parent);
+    msg.setIcon(icon);
+    msg.setWindowTitle(title);
+    msg.setText(text);
+    msg.setMinimumWidth(380);
+    msg.exec();
+}
+
+static int askQuestion(QWidget *parent, const QString &title,
+                        const QString &text)
+{
+    QMessageBox msg(parent);
+    msg.setIcon(QMessageBox::Question);
+    msg.setWindowTitle(title);
+    msg.setText(text);
+    msg.setMinimumWidth(420);
+    msg.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msg.setDefaultButton(QMessageBox::No);
+    return msg.exec();
+}
+
 // --- 新建文件 ---
 void MainWindow::newFile()
 {
@@ -543,7 +568,7 @@ void MainWindow::newFile()
     QString path = QDir(currentDirectory()).absoluteFilePath(name);
     QFile file(path);
     if (file.exists()) {
-        QMessageBox::warning(this, "新建文件", "文件已存在。");
+        showMsgBox(this, QMessageBox::Warning, "新建文件", "文件已存在。");
         return;
     }
     if (file.open(QIODevice::WriteOnly)) {
@@ -551,7 +576,8 @@ void MainWindow::newFile()
         refreshCurrentPath();
         m_statusLabel->setText(QString("📄 已创建 %1").arg(name));
     } else {
-        QMessageBox::warning(this, "新建文件", QString("创建失败: %1").arg(file.errorString()));
+        showMsgBox(this, QMessageBox::Warning, "新建文件",
+            QString("创建失败: %1").arg(file.errorString()));
     }
 }
 
@@ -564,14 +590,14 @@ void MainWindow::newFolder()
     QString path = QDir(currentDirectory()).absoluteFilePath(name);
     QDir dir(path);
     if (dir.exists()) {
-        QMessageBox::warning(this, "新建文件夹", "文件夹已存在。");
+        showMsgBox(this, QMessageBox::Warning, "新建文件夹", "文件夹已存在。");
         return;
     }
     if (QDir().mkpath(path)) {
         refreshCurrentPath();
         m_statusLabel->setText(QString("📁 已创建 %1").arg(name));
     } else {
-        QMessageBox::warning(this, "新建文件夹", "创建失败。");
+        showMsgBox(this, QMessageBox::Warning, "新建文件夹", "创建失败。");
     }
 }
 
@@ -587,12 +613,11 @@ void MainWindow::deleteSelected()
 
     QString actionHint = m_deleteToTrash ? "将移入回收站。" : "将永久删除，不可恢复！";
 
-    int ret = QMessageBox::question(this, "删除确认",
+    int ret = askQuestion(this, "删除确认",
         QString("确定要删除 %1 个条目吗？\n\n%2\n\n%3")
             .arg(names.size())
             .arg(names.mid(0, 5).join("\n"))
-            .arg(actionHint),
-        QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+            .arg(actionHint));
 
     if (ret != QMessageBox::Yes) return;
 
@@ -641,7 +666,7 @@ void MainWindow::renameSelected()
 {
     QModelIndexList sel = m_treeView->selectionModel()->selectedRows(0);
     if (sel.size() != 1) {
-        QMessageBox::information(this, "重命名", "请只选中一个条目。");
+        showMsgBox(this, QMessageBox::Information, "重命名", "请只选中一个条目。");
         return;
     }
 
@@ -655,7 +680,7 @@ void MainWindow::renameSelected()
 
     QString newPath = oldInfo.absoluteDir().absoluteFilePath(newName);
     if (QFileInfo::exists(newPath)) {
-        QMessageBox::warning(this, "重命名", "目标名称已存在。");
+        showMsgBox(this, QMessageBox::Warning, "重命名", "目标名称已存在。");
         return;
     }
 
@@ -663,7 +688,7 @@ void MainWindow::renameSelected()
         refreshCurrentPath();
         m_statusLabel->setText(QString("✏️ 已重命名为 %1").arg(newName));
     } else {
-        QMessageBox::warning(this, "重命名", "重命名失败。");
+        showMsgBox(this, QMessageBox::Warning, "重命名", "重命名失败。");
     }
 }
 
