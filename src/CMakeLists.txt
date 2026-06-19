@@ -1,8 +1,13 @@
 set(SOURCES
     main.cpp
+    file-manager/MainWindow.cpp
 )
 
-add_executable(Tuxiaolai_Toolbox ${SOURCES})
+set(HEADERS
+    file-manager/MainWindow.h
+)
+
+add_executable(Tuxiaolai_Toolbox ${SOURCES} ${HEADERS})
 
 target_link_libraries(Tuxiaolai_Toolbox PRIVATE
     Qt6::Core
