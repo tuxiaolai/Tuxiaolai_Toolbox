@@ -46,7 +46,7 @@ private:
     QPushButton      *m_btnBrowse;
     QPushButton      *m_btnSettings;
     QLabel           *m_statusLabel;
-    bool              m_showIcons = false;   // 默认关闭图标
+    bool              m_showIcons = true;    // 默认显示图标
 };
 
 } // namespace FileManager

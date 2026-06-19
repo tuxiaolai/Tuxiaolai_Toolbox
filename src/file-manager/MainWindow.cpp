@@ -321,7 +321,6 @@ void MainWindow::applyIconsSetting(bool show)
     if (show) {
         m_fileModel->setIconProvider(new QFileIconProvider());
     } else {
-        // 空图标提供器：永远返回空图标，避免 shell 提取
         class NullIconProvider : public QFileIconProvider {
         public:
             QIcon icon(IconType) const override { return QIcon(); }
@@ -329,10 +328,10 @@ void MainWindow::applyIconsSetting(bool show)
         };
         m_fileModel->setIconProvider(new NullIconProvider());
     }
-    // 刷新视图（不重扫文件系统）
+    // 强制模型重新加载以应用图标变更
     QString root = m_fileModel->rootPath();
-    m_treeView->reset();
-    m_treeView->setRootIndex(m_fileModel->index(root));
+    QModelIndex idx = m_fileModel->setRootPath(root);
+    m_treeView->setRootIndex(idx);
 }
 
 } // namespace FileManager
