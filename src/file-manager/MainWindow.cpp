@@ -366,16 +366,6 @@ void MainWindow::setupConnections()
     connect(m_treeView, &QTreeView::customContextMenuRequested,
             this, &MainWindow::onContextMenu);
 
-    // 目录双击 → 导航进入
-    connect(m_treeView, &QTreeView::doubleClicked, this, [this](const QModelIndex &index) {
-        if (!index.isValid()) return;
-        QString path = m_fileModel->filePath(index);
-        if (QFileInfo(path).isDir()) {
-            m_pathBar->setText(path);
-            navigateToPath();
-        }
-    });
-
     // 路径栏回车 → 导航
     connect(m_pathBar, &QLineEdit::returnPressed, this, &MainWindow::navigateToPath);
 
