@@ -116,7 +116,9 @@ void ToolboxWindow::setupUI()
     actLay->setContentsMargins(0, 8, 0, 8);
     actLay->setSpacing(2);
 
-    m_btnFileMgr = new QPushButton("📁");
+    m_btnFileMgr = new QPushButton();
+    m_btnFileMgr->setIcon(QIcon(":/icons/folder_dark.svg"));
+    m_btnFileMgr->setIconSize(QSize(20, 20));
     m_btnFileMgr->setObjectName("actBtn");
     m_btnFileMgr->setToolTip("文件管理器");
     m_btnFileMgr->setCursor(Qt::PointingHandCursor);
@@ -131,7 +133,8 @@ void ToolboxWindow::setupUI()
     // 2. Side Panel（可折叠隐藏，默认展开 280px）
     // ───────────────────────────────────────────────
     m_sidePanel = new QWidget();
-    m_sidePanel->setMinimumWidth(200);
+    m_sidePanel->setMinimumWidth(160);
+    m_sidePanel->setMaximumWidth(500);
     auto *sideLay = new QVBoxLayout(m_sidePanel);
     sideLay->setContentsMargins(0, 0, 0, 0);
     sideLay->setSpacing(0);
@@ -143,7 +146,11 @@ void ToolboxWindow::setupUI()
     titleLay->setContentsMargins(0, 0, 0, 0);
     titleLay->setSpacing(0);
 
-    auto *titleLabel = new QLabel("  📁  文件管理器");
+    auto *titleIcon = new QLabel();
+    titleIcon->setPixmap(QIcon(":/icons/folder_dark.svg").pixmap(16, 16));
+    titleIcon->setContentsMargins(8, 0, 4, 0);
+
+    auto *titleLabel = new QLabel("文件管理器");
     titleLabel->setObjectName("sideTitle");
 
     auto *btnClose = new QPushButton("✕");
@@ -151,6 +158,7 @@ void ToolboxWindow::setupUI()
     btnClose->setToolTip("关闭侧边栏");
     btnClose->setCursor(Qt::PointingHandCursor);
 
+    titleLay->addWidget(titleIcon);
     titleLay->addWidget(titleLabel, 1);
     titleLay->addWidget(btnClose);
 
