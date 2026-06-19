@@ -1,5 +1,11 @@
 <RCC>
     <qresource prefix="/icons">
         <file alias="settings-dark.svg">icons/settings@20x20_dark.svg</file>
+        <file alias="folder.svg">icons/folder.svg</file>
+        <file alias="text.svg">icons/text.svg</file>
+        <file alias="image.svg">icons/image.svg</file>
+        <file alias="application.svg">icons/application.svg</file>
+        <file alias="archive.svg">icons/archive.svg</file>
+        <file alias="code.svg">icons/code.svg</file>
     </qresource>
 </RCC>
