@@ -32,9 +32,9 @@ private:
     void setupUI();
     void setSidePanelVisible(bool visible);
 
-    // 活动栏（左侧永远 50px）
+    // 活动栏（可拖动改变宽度）
     QWidget         *m_activityBar;
-    QPushButton     *m_btnFileMgr;      // 📁 文件管理器开关
+    QPushButton     *m_btnFileMgr;      // 文件管理器开关
 
     // 侧面板（可折叠隐藏）
     QWidget         *m_sidePanel;
@@ -44,7 +44,7 @@ private:
     // 内容区
     QWidget         *m_contentArea;
 
-    // 状态
+    // 窗口状态
     bool  m_sideVisible = true;
     int   m_sideWidth   = 280;
 };

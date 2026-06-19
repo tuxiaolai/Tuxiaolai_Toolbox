@@ -20,7 +20,7 @@ QMainWindow {
     background-color: #1e1e1e;
 }
 
-/* ── Activity Bar（左侧活动栏，永远 50px）── */
+/* ── Activity Bar（左侧活动栏，可拖动改变宽度）── */
 QWidget#activityBar {
     background-color: #252525;
     border-right: 1px solid #333;
@@ -107,11 +107,20 @@ void ToolboxWindow::setupUI()
     mainLayout->setSpacing(0);
 
     // ───────────────────────────────────────────────
-    // 1. Activity Bar（永远固定 50px）
+    // 1. 创建 QSplitter（Activity Bar | Side Panel | Content Area）
+    // ───────────────────────────────────────────────
+    m_splitter = new QSplitter(Qt::Horizontal);
+    m_splitter->setHandleWidth(4);                  // 拖拽手柄宽度，方便鼠标抓取
+    m_splitter->setChildrenCollapsible(false);      // 不允许完全折叠
+    mainLayout->addWidget(m_splitter);
+
+    // ───────────────────────────────────────────────
+    // 2. Activity Bar（初始 50px，可拖动改变宽度）
     // ───────────────────────────────────────────────
     m_activityBar = new QWidget();
     m_activityBar->setObjectName("activityBar");
-    m_activityBar->setFixedWidth(50);
+    m_activityBar->setMinimumWidth(40);
+    m_activityBar->setMaximumWidth(300);
     auto *actLay = new QVBoxLayout(m_activityBar);
     actLay->setContentsMargins(0, 8, 0, 8);
     actLay->setSpacing(2);
@@ -127,10 +136,10 @@ void ToolboxWindow::setupUI()
     actLay->addWidget(m_btnFileMgr);
     actLay->addStretch();
 
-    mainLayout->addWidget(m_activityBar);
+    m_splitter->addWidget(m_activityBar);
 
     // ───────────────────────────────────────────────
-    // 2. Side Panel（可折叠隐藏，默认展开 280px）
+    // 3. Side Panel（可折叠隐藏，默认展开 280px）
     // ───────────────────────────────────────────────
     m_sidePanel = new QWidget();
     m_sidePanel->setMinimumWidth(160);
@@ -170,10 +179,10 @@ void ToolboxWindow::setupUI()
     m_fileManager->setMinimumSize(0, 0);        // 解除最小尺寸限制，允许窗口自由缩放
     sideLay->addWidget(m_fileManager, 1);
 
-    mainLayout->addWidget(m_sidePanel);
+    m_splitter->addWidget(m_sidePanel);
 
     // ───────────────────────────────────────────────
-    // 3. Content Area
+    // 4. Content Area
     // ───────────────────────────────────────────────
     m_contentArea = new QWidget();
     m_contentArea->setObjectName("contentArea");
@@ -184,10 +193,16 @@ void ToolboxWindow::setupUI()
     placeholder->setAlignment(Qt::AlignCenter);
     caLay->addWidget(placeholder);
 
-    mainLayout->addWidget(m_contentArea, 1);
+    m_splitter->addWidget(m_contentArea);
 
     // ───────────────────────────────────────────────
-    // 4. 连接信号
+    // 5. 设置初始分割比例
+    //    [Activity Bar: 50px] [Side Panel: 280px] [Content: 剩余]
+    // ───────────────────────────────────────────────
+    m_splitter->setSizes({50, 280, width() - 50 - 280});
+
+    // ───────────────────────────────────────────────
+    // 6. 连接信号
     // ───────────────────────────────────────────────
     // 活动栏按钮：切换侧面板显示
     connect(m_btnFileMgr, &QPushButton::clicked, this, [this](bool checked) {
@@ -207,10 +222,12 @@ void ToolboxWindow::setSidePanelVisible(bool visible)
 
     if (visible) {
         m_sidePanel->show();
+        m_sidePanel->setMinimumWidth(160);
         m_btnFileMgr->setChecked(true);
     } else {
         m_sideWidth = m_sidePanel->width();  // 保存宽度
         m_sidePanel->hide();
+        m_sidePanel->setMinimumWidth(0);     // 允许分割器重新分配空间
         m_btnFileMgr->setChecked(false);
     }
 }
