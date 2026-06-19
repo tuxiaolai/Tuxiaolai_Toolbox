@@ -2,7 +2,9 @@
  * @file MainWindow.h
  * @brief 文件管理器 — 主窗口声明
  *
- * 简约现代化的文件浏览器，提供树视图 + 路径栏。
+ * 简约现代化的文件浏览器。
+ * 路径栏 + 按钮导航到目录，树视图展示目录内容。
+ * 性能优化：QFileSystemModel 仅加载一次，导航只切 rootIndex。
  */
 
 #ifndef FILEMANAGER_MAINWINDOW_H
@@ -13,6 +15,7 @@
 #include <QFileSystemModel>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
@@ -27,17 +30,18 @@ public:
     ~MainWindow() override = default;
 
 private slots:
-    /** 树节点点击 → 更新路径栏显示 */
-    void onTreeClick(const QModelIndex &index);
+    /** 导航到路径栏中的目录 */
+    void navigateToPath();
 
 private:
     void setupUI();
     void setupConnections();
 
-    QTreeView       *m_treeView;
+    QTreeView        *m_treeView;
     QFileSystemModel *m_fileModel;
-    QLineEdit       *m_pathBar;
-    QLabel          *m_statusLabel;
+    QLineEdit        *m_pathBar;
+    QPushButton      *m_btnBrowse;
+    QLabel           *m_statusLabel;
 };
 
 } // namespace FileManager
