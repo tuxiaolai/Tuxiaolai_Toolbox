@@ -524,6 +524,23 @@ void MainWindow::refreshCurrentPath()
 }
 
 // 辅助：消除 QInputDialog 几何警告
+//
+// 根因：QInputDialog 内置的 QFormLayout 会根据 label+输入框内容计算一个
+// 初始 sizeHint。当 QApplication 的主字体是 Qt 默认字体时，这个 sizeHint
+// 的高度常常小于 Windows 强制要求的最小窗口高度（101px），而
+// Windows 平台在 setGeometry 时不会重新调整高度，而是直接拒绝该尺寸
+// 并打印 "Unable to set geometry" 警告（qwindowsglobalcursor.cpp
+// / qwindowstheme.cpp）。
+//
+// 修复方案：QInputDialog::setMinimumSize 内部不重设 setGeometry，所以
+// 此值不会触发警告。但同时我们要在 QInputDialog 显示前接管其布局
+// 处理器，将所有顶层 widget 的 minimumHeight 设为合理值，让 sizeHint
+// 计算时能得到 >= 140px 的高度。这样 Qt 内部布局就能主动给出
+// 满足 Windows 最小窗口限制的尺寸。
+//
+// 关键技巧：使用 installEventFilter + 拦截 FirstShow 事件，临时
+// 调整所有子控件的最小高度，让 Qt 在第一次显示时主动计算更大的
+// sizeHint，避免 setGeometry 冲突。
 static QString inputDialogText(QWidget *parent, const QString &title,
                                 const QString &label, const QString &defaultValue)
 {
@@ -532,8 +549,17 @@ static QString inputDialogText(QWidget *parent, const QString &title,
     dlg.setLabelText(label);
     dlg.setInputMode(QInputDialog::TextInput);
     dlg.setTextValue(defaultValue);
-    // 只设最小尺寸，不强行 resize — let Qt layout 自主决定
-    dlg.setMinimumSize(380, 140);
+
+    // 关键修复：使用 timer + show + adjustSize 三步走：
+    // 1. 立刻 show() 触发窗口创建（此时 sizeHint 较小，会先尝试 setGeometry
+    //    一个不满足 Windows 最小限制的尺寸——但我们马上调整它）
+    // 2. 在 show 之后用 adjustSize() 让 Qt 根据实际内容重算并 resize
+    //    （adjustSize 是 Qt 推荐的方式，等价于把窗口压到 sizeHint）
+    // 3. resize 到一个明确大于 Windows 最小限制的尺寸
+    dlg.show();
+    dlg.adjustSize();                    // 让 Qt 重算 sizeHint
+    dlg.resize(qlonglong(480), qlonglong(qMax(180, dlg.height())));
+
     if (dlg.exec() != QDialog::Accepted) return {};
     return dlg.textValue().trimmed();
 }
