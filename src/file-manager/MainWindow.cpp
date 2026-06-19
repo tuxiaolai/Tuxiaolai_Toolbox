@@ -316,6 +316,7 @@ void MainWindow::setupUI()
     m_fileModel = new QFileSystemModel(this);
     m_fileModel->setRootPath(QDir::homePath());
     m_fileModel->setFilter(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot);
+    m_fileModel->setOption(QFileSystemModel::DontWatch);
 
     m_treeView = new SmoothTreeView();
     m_treeView->setModel(m_fileModel);
@@ -529,7 +530,7 @@ static QString inputDialogText(QWidget *parent, const QString &title,
     dlg.setWindowTitle(title);
     dlg.setLabelText(label);
     dlg.setTextValue(defaultValue);
-    dlg.setMinimumWidth(380);
+    dlg.resize(qlonglong(480), qlonglong(dlg.sizeHint().height() + 60));
     if (dlg.exec() != QDialog::Accepted) return {};
     return dlg.textValue().trimmed();
 }
