@@ -149,7 +149,8 @@ QIcon CachedIconProvider::icon(const QFileInfo &info) const
     // ── 图片 ──
     else if (ext == "png" || ext == "jpg" || ext == "jpeg" || ext == "bmp"
              || ext == "gif" || ext == "ico" || ext == "webp" || ext == "tiff"
-             || ext == "tif" || ext == "psd" || ext == "raw" || ext == "avif")
+             || ext == "tif" || ext == "psd" || ext == "raw" || ext == "avif"
+             || ext == "svg")
         icon = m_cache.value("__image__");
 
     else
