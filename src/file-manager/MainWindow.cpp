@@ -289,9 +289,9 @@ void MainWindow::setupUI()
     setCentralWidget(centralWidget);
 
     // ── 导航栏（路径栏 + 浏览按钮） ──
-    auto *navBar = new QWidget();
-    navBar->setObjectName("navBar");
-    auto *navLayout = new QHBoxLayout(navBar);
+    m_navBar = new QWidget();
+    m_navBar->setObjectName("navBar");
+    auto *navLayout = new QHBoxLayout(m_navBar);
     navLayout->setContentsMargins(8, 6, 8, 6);
     navLayout->setSpacing(6);
 
@@ -346,7 +346,7 @@ void MainWindow::setupUI()
     statusBar()->addWidget(m_statusLabel);
 
     // ── 组合布局 ──
-    mainLayout->addWidget(navBar);
+    mainLayout->addWidget(m_navBar);
     mainLayout->addWidget(m_treeView, 1);
 }
 
@@ -370,6 +370,14 @@ void MainWindow::setupConnections()
     // 右键菜单
     connect(m_treeView, &QTreeView::customContextMenuRequested,
             this, &MainWindow::onContextMenu);
+
+    // 双击文件 → 发出信号（供外部项目集成）
+    connect(m_treeView, &QTreeView::doubleClicked, this, [this](const QModelIndex &index) {
+        if (!index.isValid()) return;
+        QFileInfo info(m_fileModel->filePath(index));
+        if (!info.isDir())
+            emit fileActivated(info.absoluteFilePath());
+    });
 
     // 路径栏回车 → 导航
     connect(m_pathBar, &QLineEdit::returnPressed, this, &MainWindow::navigateToPath);
@@ -408,7 +416,8 @@ void MainWindow::navigateToPath()
 // ---------------------------------------------------------------------------
 void MainWindow::openSettings()
 {
-    SettingsDialog dlg(m_iconMode, m_showStatusBar, m_deleteToTrash, this);
+    SettingsDialog dlg(m_iconMode, m_showStatusBar, m_deleteToTrash,
+                       m_showNavBar, this);
     if (dlg.exec() == QDialog::Accepted) {
         int newMode = dlg.iconMode();
         if (newMode != m_iconMode) {
@@ -419,6 +428,11 @@ void MainWindow::openSettings()
         if (newStatus != m_showStatusBar) {
             m_showStatusBar = newStatus;
             applyStatusBarVisible(m_showStatusBar);
+        }
+        bool newNav = dlg.navBarVisible();
+        if (newNav != m_showNavBar) {
+            m_showNavBar = newNav;
+            applyNavBarVisible(m_showNavBar);
         }
         m_deleteToTrash = dlg.deleteToTrash();
     }
@@ -517,6 +531,19 @@ void MainWindow::onContextMenu(const QPoint &pos)
 QString MainWindow::currentDirectory() const
 {
     return m_pathBar->text().trimmed();
+}
+
+/// @brief 创建文件/目录时用的目标路径
+/// 如果树视图中选中了一个目录，则在该目录下创建；否则在当前导航路径下创建
+QString MainWindow::targetDirectory() const
+{
+    QModelIndexList sel = m_treeView->selectionModel()->selectedRows(0);
+    if (sel.size() == 1) {
+        QFileInfo info(m_fileModel->filePath(sel.first()));
+        if (info.isDir())
+            return info.absoluteFilePath();
+    }
+    return currentDirectory();
 }
 
 void MainWindow::refreshCurrentPath()
@@ -625,7 +652,7 @@ void MainWindow::newFile()
     QString name = inputDialogText(this, "新建文件", "文件名称:", "");
     if (name.isEmpty()) return;
 
-    QString path = QDir(currentDirectory()).absoluteFilePath(name);
+    QString path = QDir(targetDirectory()).absoluteFilePath(name);
     QFile file(path);
     if (file.exists()) {
         showMsgBox(this, QMessageBox::Warning, "新建文件", "文件已存在。");
@@ -647,7 +674,7 @@ void MainWindow::newFolder()
     QString name = inputDialogText(this, "新建文件夹", "文件夹名称:", "");
     if (name.isEmpty()) return;
 
-    QString path = QDir(currentDirectory()).absoluteFilePath(name);
+    QString path = QDir(targetDirectory()).absoluteFilePath(name);
     QDir dir(path);
     if (dir.exists()) {
         showMsgBox(this, QMessageBox::Warning, "新建文件夹", "文件夹已存在。");
@@ -750,6 +777,11 @@ void MainWindow::renameSelected()
     } else {
         showMsgBox(this, QMessageBox::Warning, "重命名", "重命名失败。");
     }
+}
+
+void MainWindow::applyNavBarVisible(bool visible)
+{
+    m_navBar->setVisible(visible);
 }
 
 void MainWindow::applyStatusBarVisible(bool visible)

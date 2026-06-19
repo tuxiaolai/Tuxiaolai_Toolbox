@@ -29,6 +29,10 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override = default;
 
+signals:
+    /// 双击非目录文件时发出，携带文件绝对路径
+    void fileActivated(const QString &filePath);
+
 private slots:
     void navigateToPath();
     void openSettings();
@@ -45,11 +49,13 @@ private:
     void setupConnections();
     void applyIconMode(int mode);
     void applyStatusBarVisible(bool visible);
+    void applyNavBarVisible(bool visible);
     void refreshTree();
     void updateSelectionStatus();
 
     // 工具方法
     QString currentDirectory() const;
+    QString targetDirectory() const;   // 创建文件/目录时用的目标路径
     void refreshCurrentPath();
 
     QTreeView        *m_treeView;
@@ -61,6 +67,8 @@ private:
     int               m_iconMode      = 1;
     bool              m_showStatusBar  = true;
     bool              m_deleteToTrash  = true;
+    bool              m_showNavBar     = true;
+    QWidget          *m_navBar        = nullptr;
 };
 
 } // namespace FileManager

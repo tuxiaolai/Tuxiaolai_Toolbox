@@ -58,12 +58,12 @@ QPushButton:hover {
 namespace FileManager {
 
 SettingsDialog::SettingsDialog(int currentMode, bool statusBarVisible,
-                               bool deleteToTrash,
+                               bool deleteToTrash, bool navBarVisible,
                                QWidget *parent)
     : QDialog(parent)
 {
     setWindowTitle("文件管理器 — 设置");
-    setFixedSize(340, 300);
+    setFixedSize(340, 340);
     setStyleSheet(kDlgStyle);
 
     auto *layout = new QVBoxLayout(this);
@@ -110,6 +110,19 @@ SettingsDialog::SettingsDialog(int currentMode, bool statusBarVisible,
     m_chkDeleteToTrash->setChecked(deleteToTrash);
     layout->addWidget(m_chkDeleteToTrash);
 
+    // ── 分隔线 ──
+    auto *sep2 = new QFrame();
+    sep2->setObjectName("separator");
+    sep2->setFrameShape(QFrame::HLine);
+    layout->addSpacing(4);
+    layout->addWidget(sep2);
+    layout->addSpacing(4);
+
+    // ── 导航栏开关 ──
+    m_chkNavBar = new QCheckBox("显示上方导航栏");
+    m_chkNavBar->setChecked(navBarVisible);
+    layout->addWidget(m_chkNavBar);
+
     // ── 按钮 ──
     auto *buttonBox = new QDialogButtonBox(
         QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -132,6 +145,11 @@ bool SettingsDialog::statusBarVisible() const
 bool SettingsDialog::deleteToTrash() const
 {
     return m_chkDeleteToTrash->isChecked();
+}
+
+bool SettingsDialog::navBarVisible() const
+{
+    return m_chkNavBar->isChecked();
 }
 
 } // namespace FileManager
