@@ -16,6 +16,8 @@
 #include <QFileDialog>
 #include <QStyledItemDelegate>
 #include <QStyleOptionViewItem>
+#include <QScroller>
+#include <QScrollerProperties>
 #include "CachedIconProvider.h"
 #include "SettingsDialog.h"
 
@@ -279,6 +281,14 @@ void MainWindow::setupUI()
     m_treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     m_treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_treeView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    m_treeView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    // 动感平滑滚动 + 惯性
+    QScroller::grabGesture(m_treeView, QScroller::LeftMouseButtonGesture);
+    QScroller *scroller = QScroller::scroller(m_treeView);
+    QScrollerProperties prop = scroller->scrollerProperties();
+    prop.setScrollMetric(QScrollerProperties::DecelerationFactor, 0.5);
+    prop.setScrollMetric(QScrollerProperties::MaximumVelocity, 0.8);
+    scroller->setScrollerProperties(prop);
     m_treeView->header()->setStretchLastSection(false);
     for (int i = 0; i < m_fileModel->columnCount(); ++i)
         m_treeView->header()->setSectionResizeMode(i, QHeaderView::Interactive);
