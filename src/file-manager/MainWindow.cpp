@@ -209,7 +209,7 @@ class SmoothTreeView : public QTreeView
 public:
     explicit SmoothTreeView(QWidget *parent = nullptr)
         : QTreeView(parent)
-        , m_anim(new QPropertyAnimation(verticalScrollBar(), "value"))
+        , m_anim(new QPropertyAnimation(verticalScrollBar(), "value", this))
     {
         setVerticalScrollMode(ScrollPerPixel);
         m_anim->setEasingCurve(QEasingCurve::OutQuad);
@@ -234,7 +234,6 @@ protected:
         target = qBound(bar->minimum(), target, bar->maximum());
 
         m_anim->stop();
-        m_anim->setTargetObject(bar);
         m_anim->setStartValue(bar->value());
         m_anim->setEndValue(target);
         m_anim->start();
