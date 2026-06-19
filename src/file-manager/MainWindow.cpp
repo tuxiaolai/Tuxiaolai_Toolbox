@@ -842,6 +842,10 @@ void MainWindow::applyStatusBarVisible(bool visible)
 // ---------------------------------------------------------------------------
 // 剪贴板操作（与 Windows 资源管理器共享）
 // ---------------------------------------------------------------------------
+
+/// @brief 递归复制目录
+static bool copyDirRecursive(const QString &srcDir, const QString &destDir);
+
 void MainWindow::copySelected()
 {
     QModelIndexList sel = m_treeView->selectionModel()->selectedRows(0);
