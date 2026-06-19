@@ -8,21 +8,13 @@
 
 #include "CachedIconProvider.h"
 #include <QFileInfo>
-#include <QSvgRenderer>
-#include <QPainter>
-#include <QPixmap>
+#include <QIcon>
 
 namespace FileManager {
 
 static QIcon loadSvg(const QString &resPath)
 {
-    QSvgRenderer renderer(QString(resPath));
-    QPixmap pix(16, 16);
-    pix.fill(Qt::transparent);
-    QPainter p(&pix);
-    renderer.render(&p);
-    p.end();
-    return QIcon(pix);
+    return QIcon(resPath);
 }
 
 CachedIconProvider::CachedIconProvider()
