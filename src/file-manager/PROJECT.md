@@ -267,3 +267,28 @@ QWindowsWindow::setGeometry: Unable to set geometry 475x38...
 - 自定义 InputDialog（消除 setGeometry 警告）
 - fileActivated 信号
 - 新建到选中目录
+
+## 待办 / 规划
+
+### 活动栏多页面切换
+
+**现状**：活动栏硬编码为文件管理器，无法切换。
+
+**方案**：用 QStackedWidget 替代单页面：
+
+```
+活动栏
+  ├─ QStackedWidget
+  │   ├─ 页面 0: 文件管理器 (当前)
+  │   ├─ 页面 1: 搜索面板  (待扩展)
+  │   ├─ 页面 2: 终端面板  (待扩展)
+  │   └─ ...
+  └─ 由侧边栏按钮选择当前页面
+```
+
+侧边栏增加多图标按钮栏，点击切换 QStackedWidget 的当前页面：
+
+```
+[ 📁 ] [ 🔍 ] [ ⚙ ]  ← 侧边栏图标
+  页0    页1    页2
+```

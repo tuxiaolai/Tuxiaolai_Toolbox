@@ -3,6 +3,7 @@
 # ============================================================
 set(MAIN_SOURCES
     main.cpp
+    app/ToolboxWindow.cpp
     file-manager/MainWindow.cpp
     file-manager/SettingsDialog.cpp
     file-manager/CachedIconProvider.cpp
@@ -10,6 +11,7 @@ set(MAIN_SOURCES
 )
 
 set(MAIN_HEADERS
+    app/ToolboxWindow.h
     file-manager/MainWindow.h
     file-manager/SettingsDialog.h
     file-manager/CachedIconProvider.h
