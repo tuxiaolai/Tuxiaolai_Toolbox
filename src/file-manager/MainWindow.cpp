@@ -348,9 +348,12 @@ void MainWindow::setupUI()
     m_treeView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     // 垂直平滑已在 SmoothTreeView 中配置
     m_treeView->header()->setStretchLastSection(false);
-    for (int i = 0; i < m_fileModel->columnCount(); ++i)
+    // 名称列自动拉伸适应面板宽度，其余列可手动拖动
+    m_treeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    for (int i = 1; i < m_fileModel->columnCount(); ++i)
         m_treeView->header()->setSectionResizeMode(i, QHeaderView::Interactive);
-    m_treeView->setColumnWidth(0, 240);
+    m_treeView->setColumnWidth(1, 80);   // 大小
+    m_treeView->setColumnWidth(3, 140);  // 修改日期
 
     // ── 状态栏 ──
     m_statusLabel = new QLabel("就绪");

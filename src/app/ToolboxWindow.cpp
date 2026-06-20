@@ -11,7 +11,6 @@
 #include <QApplication>
 #include <QLabel>
 #include <QSplitter>
-#include <QDebug>
 
 static const char *kStyle = R"(
 QMainWindow { background-color: #1e1e1e; }
@@ -49,10 +48,6 @@ void ToolboxWindow::setupUI()
     {
         qreal pr = qApp->primaryScreen()->devicePixelRatio();
         int logicalW = qMax(40, qRound(50.0 / pr));
-        qDebug() << "\n===== DPI DEBUG ====="
-                 << "\ndevicePixelRatio:" << pr
-                 << "\nsetFixedWidth set to:" << logicalW
-                 << "=====================";
         m_sidebar->setFixedWidth(logicalW);
     }
     auto *sLay = new QVBoxLayout(m_sidebar);
