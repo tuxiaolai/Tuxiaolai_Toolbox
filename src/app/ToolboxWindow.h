@@ -11,7 +11,7 @@
 
 #include <QMainWindow>
 #include <QWidget>
-#include <QPushButton>
+#include <QLabel>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QMouseEvent>
