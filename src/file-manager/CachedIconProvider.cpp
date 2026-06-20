@@ -64,6 +64,7 @@ CachedIconProvider::CachedIconProvider()
     m_cache["xsd"]          = loadSvg("xsd");
     m_cache["yaml"]         = loadSvg("yaml");
     m_cache["qrc"]          = loadSvg("qrc");
+    m_cache["gitignore"]    = loadSvg("gitignore");
 }
 
 QIcon CachedIconProvider::icon(IconType type) const
@@ -86,6 +87,8 @@ QIcon CachedIconProvider::icon(const QFileInfo &info) const
     // 特殊文件名匹配
     if (fileName == "cmakelists.txt" || fileName == "cmakelists")
         return m_cache.value("cmake");
+    if (fileName == ".gitignore" || ext == "gitignore")
+        return m_cache.value("gitignore");
 
     QIcon icon;
 

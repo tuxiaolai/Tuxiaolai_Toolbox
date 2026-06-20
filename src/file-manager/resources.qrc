@@ -37,6 +37,7 @@
         <file alias="xsd.svg">icons/xsd.svg</file>
         <file alias="yaml.svg">icons/yaml.svg</file>
         <file alias="qrc.svg">icons/qrc.svg</file>
+        <file alias="gitignore.svg">icons/gitignore.svg</file>
 
         <!-- 语言图标 — 深色 -->
         <file alias="c_dark.svg">icons/c_dark.svg</file>
@@ -58,6 +59,7 @@
         <file alias="xsd_dark.svg">icons/xsd_dark.svg</file>
         <file alias="yaml_dark.svg">icons/yaml_dark.svg</file>
         <file alias="qrc_dark.svg">icons/qrc_dark.svg</file>
+        <file alias="gitignore_dark.svg">icons/gitignore_dark.svg</file>
 
         <!-- 操作图标 — 浅色 -->
         <file alias="addFile.svg">icons/addFile.svg</file>

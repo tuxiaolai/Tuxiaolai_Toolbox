@@ -14,6 +14,7 @@
 | `image.svg` | 图片 | png, jpg, gif, webp, bmp, ico, tiff, psd, raw, avif, svg |
 | `application.svg` | 可执行程序 | exe, lnk, bat, cmd, dll, msi |
 | `archive.svg` | 压缩包 | zip, rar, 7z, tar, gz, bz2, xz, zst |
+| `gitignore.svg` | Git 忽略文件 | .gitignore (文件名匹配) |
 
 ### 编程语言
 
