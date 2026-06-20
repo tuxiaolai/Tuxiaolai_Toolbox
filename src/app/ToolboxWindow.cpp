@@ -139,6 +139,10 @@ void ToolboxWindow::setupUI()
     m_splitter->setHandleWidth(1);
     m_splitter->setChildrenCollapsible(false);
     mainLayout->addWidget(m_splitter, 1);
+
+    // ── Side Panel ──
+    m_sidePanel = new QWidget();
+    m_sidePanel->setMinimumWidth(160);
     m_sidePanel->setMaximumWidth(500);
     auto *sideLay = new QVBoxLayout(m_sidePanel);
     sideLay->setContentsMargins(0, 0, 0, 0);
@@ -169,10 +173,10 @@ void ToolboxWindow::setupUI()
 
     sideLay->addWidget(titleBar);
 
-    // 文件管理器
-    m_fileManager = new FileManager::MainWindow();
-    m_fileManager->setWindowFlags(Qt::Widget);  // 确保嵌入
-    m_fileManager->setMinimumSize(0, 0);        // 解除最小尺寸限制，允许窗口自由缩放
+    // 文件管理器（嵌入为子控件）
+    m_fileManager = new FileManager::MainWindow(m_sidePanel);
+    m_fileManager->setWindowFlags(Qt::Widget);
+    m_fileManager->setMinimumSize(0, 0);        // 解除最小尺寸限制
     sideLay->addWidget(m_fileManager, 1);
 
     m_splitter->addWidget(m_sidePanel);
