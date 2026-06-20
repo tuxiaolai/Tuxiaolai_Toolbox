@@ -32,7 +32,7 @@ private:
     void setupUI();
 
     QWidget         *m_sidebar;        // 50px固定
-    QPushButton     *m_btnToggle;      // 📁 展开/隐藏活动栏
+    QLabel          *m_sidebarIcon;     // 图标 (不是按钮，避免on内边距)
     QWidget         *m_activityBar;    // 文件管理器 (可拖拽)
     QSplitter       *m_splitter;
     FileManager::MainWindow *m_fileManager;
