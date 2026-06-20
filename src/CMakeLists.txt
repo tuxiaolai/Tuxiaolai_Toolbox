@@ -16,6 +16,7 @@ set(MAIN_HEADERS
 )
 
 add_executable(Tuxiaolai_Toolbox ${MAIN_SOURCES} ${MAIN_HEADERS})
+set_target_properties(Tuxiaolai_Toolbox PROPERTIES WIN32_EXECUTABLE TRUE)
 
 target_link_libraries(Tuxiaolai_Toolbox PRIVATE
     Qt6::Core
@@ -45,6 +46,8 @@ add_executable(FileManager
     file-manager/resources.qrc
     file-manager/main_filemanager.cpp
 )
+
+# set_target_properties(FileManager PROPERTIES WIN32_EXECUTABLE TRUE)
 
 target_link_libraries(FileManager PRIVATE
     Qt6::Core
