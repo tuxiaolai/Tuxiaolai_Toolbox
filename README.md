@@ -1,31 +1,187 @@
-# Tuxiaolai_Toolbox
+# Tuxiaolai Toolbox（兔小赖的工具箱）
 
-> 兔小赖的工具箱 —— 本地文件处理工具集、游戏开发等个人项目仓库。
+一个基于 Qt6 + C++17 的 Windows 桌面工具箱，集成了文件管理器、终端等实用工具模块。
 
-## 仓库结构
+## 概览
+
+Tuxiaolai Toolbox 由一组独立的工具模块组成，每个模块可单独编译调试，也可集成到统一的主窗口中运行。
+
+当前已开发的模块：
+
+| 模块 | 分支 | 状态 |
+|------|------|------|
+| **文件管理器** (FileManager) | `feat/file-manager` | ✅ 可用 |
+| **终端** (Terminal) | `feat/terminal` | ✅ 基础版可用 |
+| Toolbox 主窗口 | `feat/toolbox-file-try1` | 🚧 开发中 |
+| 文件剪贴板增强 | `feat/file-clipboard` | 🚧 开发中 |
+
+---
+
+## 技术栈
+
+| 项 | 值 |
+|----|-----|
+| 语言 | **C++17** |
+| 框架 | **Qt 6.10.2** (Core / Gui / Widgets / Svg / Network) |
+| 编译器 | **MSVC 14.50** (Visual Studio 18 Community 2025) |
+| 构建系统 | **CMake 3.16+** + **Ninja** |
+| IDE | **CLion**（Debug-Visual Studio 配置） |
+| 操作系统 | **Windows**（暂不支持跨平台） |
+| 图标库 | **JetBrains IntelliJ Platform Icons**（80+ SVG） |
+
+---
+
+## 模块详情
+
+### 📁 文件管理器 (FileManager)
+
+位于 `src/file-manager/`，提供完整的本地文件系统浏览与操作功能。
+
+#### 功能
+
+- **树视图浏览** — `QFileSystemModel` + `QTreeView`，平滑动画滚动
+- **导航栏** — 路径栏输入 + 浏览按钮弹出目录选择器，独立导航
+- **文件操作** — 新建、重命名、删除（回收站/永久）、复制/粘贴/剪切
+- **系统剪贴板互通** — 支持与 Windows 资源管理器互相复制粘贴
+- **文件冲突处理** — 粘贴时弹出跳过/覆盖/全部跳过/全部覆盖对话框
+- **图标系统** — 三种模式（真图标/预设图标/无图标），自动浅/深色适配
+- **图标分类** — 18 种编程语言图标 + 通用类型 + 操作图标
+- **设置面板** — 图标模式、状态栏、回收站开关、列显隐、滚轮步长
+- **信号** — `fileActivated(const QString &filePath)` 双击文件时发出
+
+#### 独立入口
+
+```bash
+cmake --build build --target FileManager
+```
+
+### 💻 终端 (Terminal)
+
+位于 `src/terminal/`，提供内嵌的终端窗口。
+
+#### 功能
+
+- 基于 QPlainTextEdit + QProcess
+- 支持 cmd.exe / PowerShell（`--ps` 参数切换）
+- 暗色终端主题
+- 键盘输入编码（方向键 / Ctrl 组合 / Fn 键）
+- 右键菜单（复制 / 粘贴 / 全选）
+- 彩色输出支持（ANSI 转义序列）
+- 独立入口 main_terminal.cpp
+
+#### 独立入口
+
+```bash
+cmake --build build --target Terminal
+./build/src/Terminal.exe --ps  # PowerShell 模式
+```
+
+### 🚧 Toolbox 主窗口
+
+集成了 Activity Bar + 侧面板布局（VS Code 风格），目前支持文件管理器嵌入，未来扩展多页面切换（QStackedWidget）。
+
+---
+
+## 项目结构
 
 ```
-Tuxiaolai_Toolbox/              ← Git 主仓库（此目录）
-├── .gitignore
-├── README.md
-├── docs/                       ← 项目文档
-└── src/                        ← 源码
-    ├── tu-toolbox/             ← Tu Toolbox 本地文件处理工具集
-    └── chrono-corridor/        ← 《时序回廊》解谜游戏
+Tuxiaolai_Toolbox/
+├── CMakeLists.txt              ← 根 CMake 配置
+├── README.md                   ← 本文件
+├── src/
+│   ├── CMakeLists.txt          ← 子模块 CMake 配置
+│   ├── main.cpp                ← 主入口（启动 ToolboxWindow）
+│   ├── app/
+│   │   ├── ToolboxWindow.h     ← 工具箱主窗口（Activity Bar + 侧面板）
+│   │   └── ToolboxWindow.cpp
+│   ├── file-manager/           ← 文件管理器模块
+│   │   ├── MainWindow.h / .cpp
+│   │   ├── SettingsDialog.h / .cpp
+│   │   ├── CachedIconProvider.h / .cpp
+│   │   ├── resources.qrc
+│   │   ├── icons/              ← 80+ JetBrains SVG 图标
+│   │   └── README.md / PROJECT.md
+│   └── terminal/               ← 终端模块
+│       ├── TerminalWidget.h / .cpp
+│       └── PROJECT.md
+└── Branch_Project/             ← Git 工作树目录
+    ├── Tuxiaolai_Toolbox-file-manager      (feat/file-manager)
+    ├── Tuxiaolai_Toolbox_FileClipboard     (feat/file-clipboard)
+    ├── Tuxiaolai_Toolbox_Terminal          (feat/terminal)
+    └── Tuxiaolai_Toolbox_ToolboxFileTry1   (feat/toolbox-file-try1)
 ```
 
-## Git 分支 & 工作树约定
+### 图标数量
 
-- `main` — 主干分支，稳定可用版本
-- `feat/*` — 功能开发分支
-- `fix/*` — 缺陷修复分支
-- `docs/*` — 文档相关分支
+当前 `src/file-manager/icons/` 包含 **80 个 SVG 文件**（浅色 + 深色各半）：
 
-> 不同 IDE 的工作树放在 `../IDEs_Project/` 下，按 `{用途}_{IDE名}` 命名。
-> 例：`IDEs_Project/Tuxiaolai_Toolbox_CLion` 为 CLion 工作树。
+| 类别 | 图标数 | 覆盖文件类型 |
+|------|--------|-------------|
+| 通用类型 | 5 | 文件夹、文本、图片、可执行、压缩包 |
+| 编程语言 | 18 | C/C++/C#/Java/Python/JS/TS/Go/Rust/Kotlin/HTML/CSS 等 |
+| 配置文件 | 6 | JSON/YAML/XML/XSD/QRC/gitignore |
+| 媒体 | 2 | 图片、视频 |
+| 操作按钮 | 7 | 新建/删除/重命名/复制/剪切/粘贴 |
 
-## 开发说明
+所有图标自动适配浅色/深色系统主题。
 
-- 所有代码必须**编译通过**后方可提交
-- 代码注释丰富，便于多 AI 协作
-- 设计先行：先明确设计再写代码
+---
+
+## 构建方式
+
+### 前置条件
+
+- Qt 6.10.2（MSVC 2022 版本）
+- Visual Studio 18 Community 2025（含 MSVC 14.50）
+- CMake 3.16+
+- Ninja
+
+### 编译
+
+在 **Visual Studio Developer Command Prompt** 中执行：
+
+```bash
+# 克隆后初始化
+cd Tuxiaolai_Toolbox
+cmake -B build -G Ninja ^
+    -DCMAKE_PREFIX_PATH=D:/tuxiaolai/Qt/6.10.2/msvc2022_64
+
+# 编译主程序
+cmake --build build --target Tuxiaolai_Toolbox
+
+# 编译独立模块
+cmake --build build --target FileManager
+cmake --build build --target Terminal
+```
+
+### CLion 配置
+
+1. 文件 → 打开 → 选择 `Tuxiaolai_Toolbox` 目录
+2. CMake 预设选择 `Debug-Visual Studio`
+3. 在 Target 下拉中选择要编译的目标
+4. 点击 ▶ 编译运行
+
+---
+
+## Git 工作流
+
+项目使用 `git worktree` 管理多个并行开发分支：
+
+```
+main                     ← 稳定分支，仅通过合并接收功能
+feat/file-manager        ← 文件管理器开发
+feat/terminal            ← 终端开发
+feat/file-clipboard      ← 剪贴板功能开发
+feat/toolbox-file-try1   ← 主窗口集成测试
+```
+
+每个功能分支对应一个独立工作树目录，位于 `Branch_Project/` 下。
+在 CLion 中直接打开对应工作树目录即可切换到该分支开发。
+
+---
+
+## 许可证
+
+本项目为个人工具项目，代码仅供学习参考。
+
+图标版权归 [JetBrains s.r.o.](https://www.jetbrains.com/) 所有，使用 [Apache 2.0 许可证](https://www.apache.org/licenses/LICENSE-2.0)。
