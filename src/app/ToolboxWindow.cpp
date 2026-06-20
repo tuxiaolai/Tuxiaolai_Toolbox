@@ -142,8 +142,8 @@ void ToolboxWindow::setupUI()
 
     // ── Side Panel ──
     m_sidePanel = new QWidget();
-    m_sidePanel->setMinimumWidth(160);
-    m_sidePanel->setMaximumWidth(500);
+    m_sidePanel->setMinimumWidth(120);
+    m_sidePanel->setMaximumWidth(400);
     auto *sideLay = new QVBoxLayout(m_sidePanel);
     sideLay->setContentsMargins(0, 0, 0, 0);
     sideLay->setSpacing(0);
@@ -199,7 +199,7 @@ void ToolboxWindow::setupUI()
     // 5. 设置初始分割比例
     //    [Activity Bar: 50px] [Side Panel: 280px] [Content: 剩余]
     // ───────────────────────────────────────────────
-    m_splitter->setSizes({280, width() - 50 - 280});
+    m_splitter->setSizes({200, width() - 50 - 200});
 
     // ───────────────────────────────────────────────
     // 6. 连接信号
