@@ -11,6 +11,7 @@
 #include <QApplication>
 #include <QLabel>
 #include <QSplitter>
+#include <QDebug>
 
 static const char *kStyle = R"(
 QMainWindow { background-color: #1e1e1e; }
@@ -44,10 +45,14 @@ void ToolboxWindow::setupUI()
     m_sidebar = new QWidget();
     m_sidebar->setObjectName("sidebar");
     // 计算 DPI 缩放：逻辑 DPI / 96 = 缩放系数
-    // 目标物理尺寸 50px，换算逻辑尺寸
+    // 目标物理尺寸 50px，根据 devicePixelRatio 换算逻辑尺寸
     {
-        qreal dpi = qApp->primaryScreen()->logicalDotsPerInch();
-        int logicalW = qMax(40, qRound(50.0 * 96.0 / dpi));
+        qreal pr = qApp->primaryScreen()->devicePixelRatio();
+        int logicalW = qMax(40, qRound(50.0 / pr));
+        qDebug() << "\n===== DPI DEBUG ====="
+                 << "\ndevicePixelRatio:" << pr
+                 << "\nsetFixedWidth set to:" << logicalW
+                 << "=====================";
         m_sidebar->setFixedWidth(logicalW);
     }
     auto *sLay = new QVBoxLayout(m_sidebar);
