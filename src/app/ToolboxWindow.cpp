@@ -43,7 +43,13 @@ void ToolboxWindow::setupUI()
     // ── 侧边栏 (50px, 固定) ──
     m_sidebar = new QWidget();
     m_sidebar->setObjectName("sidebar");
-    m_sidebar->setFixedWidth(50);
+    // 计算 DPI 缩放：逻辑 DPI / 96 = 缩放系数
+    // 目标物理尺寸 50px，换算逻辑尺寸
+    {
+        qreal dpi = qApp->primaryScreen()->logicalDotsPerInch();
+        int logicalW = qMax(40, qRound(50.0 * 96.0 / dpi));
+        m_sidebar->setFixedWidth(logicalW);
+    }
     auto *sLay = new QVBoxLayout(m_sidebar);
     sLay->setContentsMargins(0,0,0,0);
     sLay->setSpacing(0);
@@ -55,7 +61,7 @@ void ToolboxWindow::setupUI()
     m_sidebarIcon->setAlignment(Qt::AlignCenter);
     m_sidebarIcon->setToolTip("文件管理器");
     m_sidebarIcon->setCursor(Qt::PointingHandCursor);
-    m_sidebarIcon->setFixedSize(50, 40);
+    m_sidebarIcon->setFixedSize(m_sidebar->width(), 40);
     m_sidebarIcon->installEventFilter(this);   // 点击切换
     sLay->addWidget(m_sidebarIcon);
     sLay->addStretch();

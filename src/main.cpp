@@ -25,9 +25,6 @@ static void toolboxMsgFilter(QtMsgType type, const QMessageLogContext &ctx,
 
 int main(int argc, char *argv[])
 {
-    // 禁用 DPI 缩放，所有尺寸按像素精确控制
-    QApplication::setAttribute(Qt::AA_DisableHighDpiScaling);
-
     QApplication app(argc, argv);
     g_defaultMsgHandler = qInstallMessageHandler(toolboxMsgFilter);
 
