@@ -58,6 +58,12 @@ CachedIconProvider::CachedIconProvider()
     m_cache["python"]       = loadSvg("python");
     m_cache["qt"]           = loadSvg("qt");
     m_cache["typescript"]   = loadSvg("typescript");
+    m_cache["json"]         = loadSvg("json");
+    m_cache["video"]        = loadSvg("video");
+    m_cache["xml"]          = loadSvg("xml");
+    m_cache["xsd"]          = loadSvg("xsd");
+    m_cache["yaml"]         = loadSvg("yaml");
+    m_cache["qrc"]          = loadSvg("qrc");
 }
 
 QIcon CachedIconProvider::icon(IconType type) const
@@ -108,8 +114,10 @@ QIcon CachedIconProvider::icon(const QFileInfo &info) const
 
     // ── Qt ──
     else if (ext == "pro" || ext == "pri" || ext == "prf"
-             || ext == "qml" || ext == "qrc")
+             || ext == "qml")
         icon = m_cache.value("qt");
+    else if (ext == "qrc")
+        icon = m_cache.value("qrc");
 
     // ── Web ──
     else if (ext == "html" || ext == "htm" || ext == "xhtml")
@@ -122,6 +130,21 @@ QIcon CachedIconProvider::icon(const QFileInfo &info) const
         icon = m_cache.value("typescript");
     else if (ext == "md" || ext == "mdx" || ext == "markdown")
         icon = m_cache.value("markdown");
+
+    // ── 视频 ──
+    else if (ext == "mp4" || ext == "mkv" || ext == "avi" || ext == "mov"
+             || ext == "wmv" || ext == "flv" || ext == "webm" || ext == "m4v")
+        icon = m_cache.value("video");
+
+    // ── JSON / YAML / XML / XSD ──
+    else if (ext == "json")
+        icon = m_cache.value("json");
+    else if (ext == "yaml" || ext == "yml")
+        icon = m_cache.value("yaml");
+    else if (ext == "xml")
+        icon = m_cache.value("xml");
+    else if (ext == "xsd")
+        icon = m_cache.value("xsd");
 
     // ── Java / Kotlin ──
     else if (ext == "java" || ext == "class" || ext == "jar")
@@ -142,9 +165,8 @@ QIcon CachedIconProvider::icon(const QFileInfo &info) const
 
     // ── 文本 / 配置文件 ──
     else if (ext == "txt" || ext == "md" || ext == "log" || ext == "ini"
-             || ext == "cfg" || ext == "conf" || ext == "qss" || ext == "yaml"
-             || ext == "yml" || ext == "toml" || ext == "json" || ext == "xml"
-             || ext == "rst" || ext == "tex")
+             || ext == "cfg" || ext == "conf" || ext == "qss"
+             || ext == "toml" || ext == "rst" || ext == "tex")
         icon = m_cache.value("__text__");
 
     // ── 图片 ──

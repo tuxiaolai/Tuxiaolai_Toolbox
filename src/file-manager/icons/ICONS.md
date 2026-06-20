@@ -28,10 +28,16 @@
 | `java.svg` | Java | java, class, jar |
 | `javascript.svg` | JavaScript | js, jsx, mjs, cjs |
 | `kotlin.svg` | Kotlin | kt, kts, ktm |
+| `json.svg` | JSON | json |
 | `markdown.svg` | Markdown | md, mdx, markdown |
 | `python.svg` | Python | py, pyw, pyx, pxd, ipynb |
-| `qt.svg` | Qt | pro, pri, prf, qml, qrc |
+| `qt.svg` | Qt | pro, pri, prf, qml |
+| `qrc.svg` | Qt 资源 | qrc |
 | `typescript.svg` | TypeScript | ts, tsx |
+| `video.svg` | 视频 | mp4, mkv, avi, mov, wmv, flv, webm, m4v |
+| `xml.svg` | XML | xml |
+| `xsd.svg` | XSD 架构 | xsd |
+| `yaml.svg` | YAML | yaml, yml |
 
 ### 其他代码（均回退到 `text.svg` 图标）
 

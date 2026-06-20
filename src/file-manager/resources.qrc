@@ -31,6 +31,12 @@
         <file alias="qt.svg">icons/qt.svg</file>
         <file alias="typescript.svg">icons/typeScript.svg</file>
         <file alias="markdown.svg">icons/markdown.svg</file>
+        <file alias="json.svg">icons/json.svg</file>
+        <file alias="video.svg">icons/video.svg</file>
+        <file alias="xml.svg">icons/xml.svg</file>
+        <file alias="xsd.svg">icons/xsd.svg</file>
+        <file alias="yaml.svg">icons/yaml.svg</file>
+        <file alias="qrc.svg">icons/qrc.svg</file>
 
         <!-- 语言图标 — 深色 -->
         <file alias="c_dark.svg">icons/c_dark.svg</file>
@@ -46,6 +52,12 @@
         <file alias="qt_dark.svg">icons/qt_dark.svg</file>
         <file alias="typescript_dark.svg">icons/typeScript_dark.svg</file>
         <file alias="markdown_dark.svg">icons/markdown_dark.svg</file>
+        <file alias="json_dark.svg">icons/json_dark.svg</file>
+        <file alias="video_dark.svg">icons/video_dark.svg</file>
+        <file alias="xml_dark.svg">icons/xml_dark.svg</file>
+        <file alias="xsd_dark.svg">icons/xsd_dark.svg</file>
+        <file alias="yaml_dark.svg">icons/yaml_dark.svg</file>
+        <file alias="qrc_dark.svg">icons/qrc_dark.svg</file>
 
         <!-- 操作图标 — 浅色 -->
         <file alias="addFile.svg">icons/addFile.svg</file>
