@@ -2,23 +2,18 @@
  * @file ToolboxWindow.h
  * @brief 兔小赖工具箱主窗口
  *
- * 布局（参照 VS Code/CLion）：
- *   [Activity Bar (50px)] [Side Panel ⇔ Content Area]
- *
- * Activity Bar 固定在左侧，Side Panel 可折叠隐藏。
+ * 布局： [Activity Bar (50px)] [Side Panel (200px)] [Content Area]
+ *   活动栏可拖动移动窗口，侧边栏固定不可拖拽。
  */
 
 #ifndef TOOLBOXWINDOW_H
 #define TOOLBOXWINDOW_H
 
 #include <QMainWindow>
-#include <QSplitter>
 #include <QWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QLabel>
-#include <QStackedWidget>
 #include <QMouseEvent>
 
 namespace FileManager { class MainWindow; }
@@ -34,24 +29,15 @@ protected:
 
 private:
     void setupUI();
-    void setSidePanelVisible(bool visible);
 
-    // 活动栏（可拖动改变宽度）
     QWidget         *m_activityBar;
-    QPushButton     *m_btnFileMgr;      // 文件管理器开关
-
-    // 侧面板（可折叠隐藏）
+    QPushButton     *m_btnFileMgr;
     QWidget         *m_sidePanel;
-    QSplitter       *m_splitter;
     FileManager::MainWindow *m_fileManager;
-
-    // 内容区
     QWidget         *m_contentArea;
 
-    // 窗口状态
     bool  m_sideVisible = true;
-    int   m_sideWidth   = 280;
-    QPoint m_dragStartPos;  // 活动栏拖拽窗口起始点
+    QPoint m_dragStartPos;
 };
 
 #endif // TOOLBOXWINDOW_H
