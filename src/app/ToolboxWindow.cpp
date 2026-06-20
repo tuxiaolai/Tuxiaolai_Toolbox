@@ -3,25 +3,28 @@
  * @brief 兔小赖工具箱主窗口实现
  *
  * 布局：
- *   [Activity Bar (50px)] [Side Panel (200px)] [Content Area]
- *   活动栏可拖动移动窗口，侧边栏不可拖拽。
+ *   [侧边栏 50px 固定] [活动栏 200px 可拖拽] [内容区]
+ *   活动栏包含完整文件管理器，右侧分割线可拖拽调整宽度。
  */
 
 #include "ToolboxWindow.h"
 #include "../file-manager/MainWindow.h"
 #include <QApplication>
 #include <QLabel>
+#include <QSplitter>
 
 static const char *kStyle = R"(
 QMainWindow { background-color: #1e1e1e; }
-QWidget#activityBar { background-color: #252525; border-right: 1px solid #333; }
-QPushButton#actBtn {
+QWidget#sidebar { background-color: #252525; border-right: 1px solid #333; }
+QWidget#activityBar { background-color: #1e1e1e; }
+QPushButton#sideBtn {
     background: transparent; color: #888; border: none;
     font-size: 18px; min-width: 48px; min-height: 40px;
-    border-left: 2px solid transparent;
 }
-QPushButton#actBtn:hover { background-color: #2a2a2a; color: #bbb; }
-QPushButton#actBtn:checked { color: #fff; border-left: 2px solid #89b4fa; background-color: #2a2a2a; }
+QPushButton#sideBtn:hover { background-color: #2a2a2a; color: #bbb; }
+QPushButton#sideBtn:checked { color: #fff; background-color: #2a2a2a; }
+QSplitter::handle { background-color: #333; width: 1px; }
+QSplitter::handle:hover { background-color: #555; }
 QWidget#contentArea { background-color: #1e1e1e; }
 QLabel#placeholderLabel { color: #444; font-size: 18px; }
 )";
@@ -42,41 +45,46 @@ void ToolboxWindow::setupUI()
     lay->setContentsMargins(0,0,0,0);
     lay->setSpacing(0);
 
-    // ── 活动栏 50px ──
+    // ── 侧边栏 (50px, 固定) ──
+    m_sidebar = new QWidget();
+    m_sidebar->setObjectName("sidebar");
+    m_sidebar->setFixedWidth(50);
+    auto *sLay = new QVBoxLayout(m_sidebar);
+    sLay->setContentsMargins(0,8,0,8);
+    sLay->setSpacing(2);
+
+    m_btnToggle = new QPushButton();
+    m_btnToggle->setIcon(QIcon(":/icons/folder_dark.svg"));
+    m_btnToggle->setIconSize(QSize(20,20));
+    m_btnToggle->setObjectName("sideBtn");
+    m_btnToggle->setToolTip("文件管理器");
+    m_btnToggle->setCursor(Qt::PointingHandCursor);
+    m_btnToggle->setCheckable(true);
+    m_btnToggle->setChecked(true);
+    sLay->addWidget(m_btnToggle);
+    sLay->addStretch();
+    lay->addWidget(m_sidebar);
+    m_sidebar->installEventFilter(this);
+
+    // ── 活动栏 + 内容区 (QSplitter) ──
+    m_splitter = new QSplitter(Qt::Horizontal);
+    m_splitter->setHandleWidth(4);
+    m_splitter->setChildrenCollapsible(false);
+
+    // 活动栏 (文件管理器)
     m_activityBar = new QWidget();
     m_activityBar->setObjectName("activityBar");
-    m_activityBar->setFixedWidth(50);
     auto *aLay = new QVBoxLayout(m_activityBar);
-    aLay->setContentsMargins(0,8,0,8);
-    aLay->setSpacing(2);
-
-    m_btnFileMgr = new QPushButton();
-    m_btnFileMgr->setIcon(QIcon(":/icons/folder_dark.svg"));
-    m_btnFileMgr->setIconSize(QSize(20,20));
-    m_btnFileMgr->setObjectName("actBtn");
-    m_btnFileMgr->setToolTip("文件管理器");
-    m_btnFileMgr->setCursor(Qt::PointingHandCursor);
-    m_btnFileMgr->setCheckable(true);
-    m_btnFileMgr->setChecked(m_sideVisible);
-    aLay->addWidget(m_btnFileMgr);
-    aLay->addStretch();
-    lay->addWidget(m_activityBar);
-    m_activityBar->installEventFilter(this);
-
-    // ── 侧边栏 200px（固定不可拖拽）──
-    m_sidePanel = new QWidget();
-    m_sidePanel->setFixedWidth(200);
-    m_sidePanel->setVisible(m_sideVisible);
-    auto *sLay = new QVBoxLayout(m_sidePanel);
-    sLay->setContentsMargins(0,0,0,0);
-    sLay->setSpacing(0);
-    m_fileManager = new FileManager::MainWindow(m_sidePanel);
+    aLay->setContentsMargins(0,0,0,0);
+    aLay->setSpacing(0);
+    m_fileManager = new FileManager::MainWindow(m_activityBar);
     m_fileManager->setWindowFlags(Qt::Widget);
     m_fileManager->setMinimumSize(0,0);
-    sLay->addWidget(m_fileManager,1);
-    lay->addWidget(m_sidePanel);
+    aLay->addWidget(m_fileManager,1);
 
-    // ── 内容区 ──
+    m_splitter->addWidget(m_activityBar);
+
+    // 内容区
     m_contentArea = new QWidget();
     m_contentArea->setObjectName("contentArea");
     auto *cLay = new QVBoxLayout(m_contentArea);
@@ -85,18 +93,28 @@ void ToolboxWindow::setupUI()
     ph->setObjectName("placeholderLabel");
     ph->setAlignment(Qt::AlignCenter);
     cLay->addWidget(ph);
-    lay->addWidget(m_contentArea, 1);
+    m_splitter->addWidget(m_contentArea);
+
+    // 初始分割：活动栏 200px
+    m_splitter->setSizes({200, width() - 50 - 200});
+
+    lay->addWidget(m_splitter, 1);
 
     // ── 信号 ──
-    connect(m_btnFileMgr, &QPushButton::clicked, this, [this](bool checked) {
-        m_sideVisible = checked;
-        m_sidePanel->setVisible(checked);
+    connect(m_btnToggle, &QPushButton::clicked, this, [this](bool checked) {
+        m_activityVisible = checked;
+        m_activityBar->setVisible(checked);
+        if (checked) {
+            m_activityBar->setMinimumWidth(100);
+        } else {
+            m_activityBar->setMinimumWidth(0);
+        }
     });
 }
 
 bool ToolboxWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == m_activityBar) {
+    if (obj == m_sidebar) {
         if (event->type() == QEvent::MouseButtonPress) {
             auto *me = static_cast<QMouseEvent*>(event);
             if (me->button() == Qt::LeftButton) {
