@@ -52,7 +52,15 @@ QString formatFileSize(qint64 bytes)
 // ---------------------------------------------------------------------------
 // 样式常量（内联 QSS）
 // ---------------------------------------------------------------------------
-static const char *kStyleSheet = R"(
+// ── 主题检测（与 CachedIconProvider 一致） ──
+static bool isSystemDark()
+{
+    if (!qApp) return true;
+    return qApp->palette().window().color().lightness() < 160;
+}
+
+// ── 深色主题样式表 ──
+static const char *kStyleDark = R"(
 QMainWindow {
     background-color: #1e1e1e;
 }
@@ -176,6 +184,121 @@ QStatusBar {
 }
 )";
 
+// ── 亮色主题样式表 ──
+static const char *kStyleLight = R"(
+QMainWindow {
+    background-color: #f5f5f5;
+}
+QWidget#navBar {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+QLineEdit#pathBar {
+    background-color: #f5f5f5;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-family: "Consolas", "Microsoft YaHei UI", monospace;
+}
+QLineEdit#pathBar:focus {
+    border: 1px solid #aaa;
+}
+QPushButton#btnBrowse {
+    background-color: #e0e0e0;
+    color: #444;
+    border: none;
+    padding: 4px 14px;
+    font-size: 12px;
+}
+QPushButton#btnBrowse:hover {
+    background-color: #d0d0d0;
+    color: #222;
+}
+QPushButton#btnBrowse:pressed {
+    background-color: #ccc;
+}
+QPushButton#btnSettings {
+    background-color: transparent;
+    color: #888;
+    border: none;
+    padding: 4px 8px;
+    font-size: 14px;
+}
+QPushButton#btnSettings:hover {
+    color: #333;
+}
+QTreeView {
+    background-color: #fff;
+    border: none;
+    outline: none;
+    color: #444;
+    font-size: 12px;
+}
+QTreeView::item {
+    padding: 2px 6px;
+    min-height: 20px;
+}
+QTreeView::item:hover {
+    background-color: #eaeaea;
+}
+QTreeView::item:selected {
+    background-color: #d0e4f8;
+    color: #000;
+}
+QTreeView::branch:has-children:!has-siblings:closed,
+QTreeView::branch:closed:has-children:has-siblings {
+    border-image: none; image: none;
+}
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings {
+    border-image: none; image: none;
+}
+QHeaderView::section {
+    background-color: #f5f5f5;
+    color: #666;
+    border: none;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 3px 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+QHeaderView::section:last {
+    border-right: none;
+}
+QScrollBar:vertical {
+    background-color: #f5f5f5;
+    width: 6px;
+    margin: 0;
+}
+QScrollBar::handle:vertical {
+    background-color: #ccc;
+    min-height: 30px;
+}
+QScrollBar::handle:vertical:hover {
+    background-color: #aaa;
+}
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0;
+    border: none;
+}
+QStatusBar {
+    background-color: #fff;
+    color: #888;
+    border-top: 1px solid #ddd;
+    font-size: 11px;
+    padding: 0 8px;
+}
+)";
+
+// 获取当前主题样式的辅助函数
+static const char *currentStyleSheet()
+{
+    return isSystemDark() ? kStyleDark : kStyleLight;
+}
+
 // ---------------------------------------------------------------------------
 // 自定义委托：选中时不对图标染色
 // ---------------------------------------------------------------------------
@@ -276,7 +399,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_btnSettings(nullptr)
     , m_statusLabel(nullptr)
 {
-    setStyleSheet(kStyleSheet);
+    setStyleSheet(currentStyleSheet());
     setupUI();
     applyIconMode(m_iconMode);  // 应用默认图标模式
     applyStatusBarVisible(m_showStatusBar);
@@ -554,12 +677,16 @@ void MainWindow::onContextMenu(const QPoint &pos)
     };
 
     QMenu menu(this);
-    menu.setStyleSheet(R"(
-        QMenu { background:#2a2a2a; color:#ccc; border:1px solid #444; border-radius:8px; padding:6px; }
-        QMenu::item { padding:6px 24px 6px 32px; }
-        QMenu::item:selected { background:#3a3a3a; color:#fff; }
-        QMenu::separator { height:1px; background:#444; margin:4px 8px; }
-    )");
+    menu.setStyleSheet(isSystemDark()
+        ? "QMenu { background:#2a2a2a; color:#ccc; border:1px solid #444; border-radius:8px; padding:6px; }"
+          "QMenu::item { padding:6px 24px 6px 32px; }"
+          "QMenu::item:selected { background:#3a3a3a; color:#fff; }"
+          "QMenu::separator { height:1px; background:#444; margin:4px 8px; }"
+        : "QMenu { background:#fff; color:#333; border:1px solid #ddd; border-radius:8px; padding:6px; }"
+          "QMenu::item { padding:6px 24px 6px 32px; }"
+          "QMenu::item:selected { background:#eaeaea; color:#000; }"
+          "QMenu::separator { height:1px; background:#ddd; margin:4px 8px; }"
+    );
 
     QAction *actNewFile   = menu.addAction(icon("addFile"),   "新建文件\tCtrl+N");
     QAction *actNewFolder = menu.addAction(icon("addDirectory"), "新建文件夹\tCtrl+Shift+N");
