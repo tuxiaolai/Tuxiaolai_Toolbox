@@ -19,7 +19,7 @@ QWidget#sidebar { background-color: #252525; border-right: 1px solid #333; }
 QWidget#activityBar { background-color: #1e1e1e; }
 QPushButton#sideBtn {
     background: transparent; color: #888; border: none;
-    font-size: 18px; min-width: 48px; min-height: 40px;
+    font-size: 16px; min-width: 38px; min-height: 36px;
 }
 QPushButton#sideBtn:hover { background-color: #2a2a2a; color: #bbb; }
 QPushButton#sideBtn:checked { color: #fff; background-color: #2a2a2a; }
@@ -45,17 +45,17 @@ void ToolboxWindow::setupUI()
     lay->setContentsMargins(0,0,0,0);
     lay->setSpacing(0);
 
-    // ── 侧边栏 (50px, 固定) ──
+    // ── 侧边栏 (固定，适配DPI缩放) ──
     m_sidebar = new QWidget();
     m_sidebar->setObjectName("sidebar");
-    m_sidebar->setFixedWidth(50);
+    m_sidebar->setFixedWidth(40);    // 逻辑像素，目标 ~50px 物理
     auto *sLay = new QVBoxLayout(m_sidebar);
-    sLay->setContentsMargins(0,8,0,8);
+    sLay->setContentsMargins(0,6,0,6);
     sLay->setSpacing(2);
 
     m_btnToggle = new QPushButton();
     m_btnToggle->setIcon(QIcon(":/icons/folder_dark.svg"));
-    m_btnToggle->setIconSize(QSize(20,20));
+    m_btnToggle->setIconSize(QSize(16,16));
     m_btnToggle->setObjectName("sideBtn");
     m_btnToggle->setToolTip("文件管理器");
     m_btnToggle->setCursor(Qt::PointingHandCursor);
