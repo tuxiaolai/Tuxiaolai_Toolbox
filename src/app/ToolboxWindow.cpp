@@ -14,17 +14,95 @@
 #include <QSplitter>
 #include <QStackedWidget>
 
+/**
+ * 现代简约暗色主题
+ * 配色方案：深邃底色 + 柔和对比 + 蓝色强调
+ */
 static const char *kStyle = R"(
-QMainWindow { background-color: #1e1e1e; }
-QWidget#sidebar { background-color: #252525; border-right: 1px solid #333; }
-QWidget#activityBar { background-color: #1e1e1e; }
-QWidget#sidebarIcon { background: transparent; }
-QWidget#sidebarIcon:hover { background-color: #2a2a2a; }
-QWidget#sidebarIconActive { background-color: #1e1e1e; border-right: 2px solid #569cd6; }
-QSplitter::handle { background-color: #333; width: 1px; }
-QSplitter::handle:hover { background-color: #555; }
-QWidget#contentArea { background-color: #1e1e1e; }
-QLabel#placeholderLabel { color: #444; font-size: 18px; }
+/* ── 全局 ── */
+QMainWindow {
+    background-color: #0d0d0f;
+}
+* {
+    font-family: "Segoe UI", "Microsoft YaHei UI", "PingFang SC", sans-serif;
+}
+
+/* ── 侧边栏 ── */
+QWidget#sidebar {
+    background-color: #121214;
+    border-right: 1px solid #1e1e22;
+}
+QWidget#sidebarIcon {
+    background: transparent;
+    border-left: 2px solid transparent;
+}
+QWidget#sidebarIcon:hover {
+    background-color: #1a1a1e;
+}
+QWidget#sidebarIconActive {
+    background-color: #161618;
+    border-left: 2px solid #5b9aff;
+}
+
+/* ── 活动栏 ── */
+QWidget#activityBar {
+    background-color: #0d0d0f;
+}
+
+/* ── 分割条 ── */
+QSplitter::handle {
+    background-color: #1e1e22;
+    width: 1px;
+}
+QSplitter::handle:hover {
+    background-color: #5b9aff;
+    width: 2px;
+}
+
+/* ── 内容区 ── */
+QWidget#contentArea {
+    background-color: #0d0d0f;
+    border-left: 1px solid #1e1e22;
+}
+QLabel#placeholderLabel {
+    color: #3a3c42;
+    font-size: 15px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+}
+
+/* ── 右键菜单 ── */
+QMenu {
+    background-color: #1a1a1e;
+    border: 1px solid #2a2a2e;
+    border-radius: 8px;
+    padding: 4px;
+}
+QMenu::item {
+    padding: 6px 24px 6px 12px;
+    border-radius: 4px;
+    color: #c8cad0;
+    font-size: 13px;
+}
+QMenu::item:selected {
+    background-color: #252529;
+    color: #e4e6eb;
+}
+QMenu::separator {
+    height: 1px;
+    background-color: #2a2a2e;
+    margin: 4px 8px;
+}
+
+/* ── Tooltip ── */
+QToolTip {
+    background-color: #1a1a1e;
+    color: #c8cad0;
+    border: 1px solid #2a2a2e;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+}
 )";
 
 ToolboxWindow::ToolboxWindow(QWidget *parent) : QMainWindow(parent)
@@ -77,7 +155,6 @@ void ToolboxWindow::setupUI()
     m_iconBrowser->setFixedSize(m_sidebar->width(), 40);
     m_iconBrowser->installEventFilter(this);
     m_iconBrowser->setProperty("activityIndex", 1);
-    m_iconBrowser->setStyleSheet("font-size: 16px;");
     sLay->addWidget(m_iconBrowser);
 
     sLay->addStretch();

@@ -150,46 +150,124 @@ void BrowserWidget::setupUI()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
 
+    // ── 导航栏样式 + 全局字体 ──
+    setStyleSheet(R"(
+        * {
+            font-family: "Segoe UI", "Microsoft YaHei UI", "PingFang SC", sans-serif;
+        }
+        QWidget#browserNavBar {
+            background-color: #0d0d0f;
+            border-bottom: 1px solid #1e1e22;
+        }
+        QWidget#browserNavBar QPushButton {
+            background: transparent;
+            color: #9a9ca0;
+            border: none;
+            border-radius: 5px;
+            padding: 2px 6px;
+            font-size: 13px;
+        }
+        QWidget#browserNavBar QPushButton:hover {
+            background-color: #1a1a1e;
+            color: #e4e6eb;
+        }
+        QWidget#browserNavBar QPushButton:pressed {
+            background-color: #222228;
+        }
+        QWidget#browserNavBar QPushButton:disabled {
+            color: #3a3c42;
+        }
+        QWidget#browserNavBar QLineEdit {
+            background-color: #161618;
+            color: #c8cad0;
+            border: 1px solid #1e1e22;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 13px;
+            selection-background-color: #3b5f9a;
+        }
+        QWidget#browserNavBar QLineEdit:focus {
+            border-color: #5b9aff;
+            background-color: #1a1a1e;
+        }
+        QWidget#browserNavBar QLineEdit:hover:!focus {
+            border-color: #2a2a2e;
+        }
+    )");
+
     // ── 导航栏 ──
     auto *navBar = new QWidget;
     navBar->setObjectName("browserNavBar");
-    navBar->setFixedHeight(36);
-    navBar->setStyleSheet(
-        "#browserNavBar { background-color: #2d2d2d; border-bottom: 1px solid #3a3a3a; }"
-        "QPushButton { background: transparent; color: #ccc; border: 1px solid transparent; "
-        "  border-radius: 3px; padding: 2px 8px; font-size: 14px; }"
-        "QPushButton:hover { background: #3a3a3a; border-color: #555; }"
-        "QPushButton:disabled { color: #555; }"
-        "QLineEdit { background: #1e1e1e; color: #ddd; border: 1px solid #3a3a3a; "
-        "  border-radius: 4px; padding: 3px 8px; font-size: 13px; }");
+    navBar->setFixedHeight(38);
 
     auto *navLayout = new QHBoxLayout(navBar);
-    navLayout->setContentsMargins(4, 4, 4, 4);
+    navLayout->setContentsMargins(6, 4, 6, 4);
     navLayout->setSpacing(2);
 
     m_btnBack = new QPushButton("◀");
     m_btnBack->setToolTip("后退");
-    m_btnBack->setFixedWidth(30);
+    m_btnBack->setFixedSize(30, 28);
     navLayout->addWidget(m_btnBack);
 
     m_btnForward = new QPushButton("▶");
     m_btnForward->setToolTip("前进");
-    m_btnForward->setFixedWidth(30);
+    m_btnForward->setFixedSize(30, 28);
     navLayout->addWidget(m_btnForward);
 
     m_btnRefresh = new QPushButton("↻");
     m_btnRefresh->setToolTip("刷新");
-    m_btnRefresh->setFixedWidth(30);
+    m_btnRefresh->setFixedSize(30, 28);
     navLayout->addWidget(m_btnRefresh);
 
     m_urlBar = new QLineEdit;
-    m_urlBar->setPlaceholderText("输入网址或搜索...");
+    m_urlBar->setPlaceholderText("搜索或输入网址...");
+    m_urlBar->setClearButtonEnabled(true);
     navLayout->addWidget(m_urlBar, 1);
 
     mainLayout->addWidget(navBar);
 
     // ── 标签页 ──
     m_tabs = new BrowserTabWidget;
+    m_tabs->setStyleSheet(R"(
+        /* 标签面板 */
+        QTabWidget::pane {
+            border: none;
+            background-color: #0d0d0f;
+        }
+        /* 标签栏背景 */
+        QTabBar {
+            background-color: #0d0d0f;
+            border-bottom: 1px solid #1e1e22;
+        }
+        /* 单个标签 */
+        QTabBar::tab {
+            background-color: transparent;
+            color: #7a7c82;
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 6px 14px 5px 14px;
+            margin: 0;
+            font-size: 12px;
+            min-width: 60px;
+            max-width: 160px;
+        }
+        QTabBar::tab:hover {
+            background-color: #121214;
+            color: #c8cad0;
+        }
+        QTabBar::tab:selected {
+            background-color: transparent;
+            color: #e4e6eb;
+            border-bottom: 2px solid #5b9aff;
+        }
+        /* 关闭按钮 */
+        QTabBar::close-button {
+            image: none;
+            font-family: "Segoe UI", sans-serif;
+            subcontrol-position: right;
+            padding: 0 2px;
+        }
+    )");
     mainLayout->addWidget(m_tabs, 1);
 }
 
