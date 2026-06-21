@@ -78,5 +78,9 @@
         <file alias="copy_dark.svg">icons/copy_dark.svg</file>
         <file alias="cut_dark.svg">icons/cut_dark.svg</file>
         <file alias="paste_dark.svg">icons/paste_dark.svg</file>
+
+        <!-- Web 浏览器图标 -->
+        <file alias="web.svg">icons/web.svg</file>
+        <file alias="web_dark.svg">icons/web_dark.svg</file>
     </qresource>
 </RCC>

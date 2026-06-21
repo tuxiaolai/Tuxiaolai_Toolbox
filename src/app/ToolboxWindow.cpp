@@ -148,7 +148,7 @@ void ToolboxWindow::setupUI()
     // 图标 2: 浏览器
     m_iconBrowser = new QLabel();
     m_iconBrowser->setObjectName("sidebarIcon");
-    m_iconBrowser->setText("🌐");
+    m_iconBrowser->setPixmap(QIcon(":/icons/web_dark.svg").pixmap(20,20));
     m_iconBrowser->setAlignment(Qt::AlignCenter);
     m_iconBrowser->setToolTip("Tu 浏览器");
     m_iconBrowser->setCursor(Qt::PointingHandCursor);
