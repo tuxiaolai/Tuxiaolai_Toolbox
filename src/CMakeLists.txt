@@ -8,6 +8,7 @@ set(MAIN_SOURCES
     file-manager/SettingsDialog.cpp
     file-manager/CachedIconProvider.cpp
     file-manager/resources.qrc
+    tubrowser/BrowserWidget.cpp
 )
 
 set(MAIN_HEADERS
@@ -15,6 +16,7 @@ set(MAIN_HEADERS
     file-manager/MainWindow.h
     file-manager/SettingsDialog.h
     file-manager/CachedIconProvider.h
+    tubrowser/BrowserWidget.h
 )
 
 add_executable(Tuxiaolai_Toolbox ${MAIN_SOURCES} ${MAIN_HEADERS})
@@ -25,6 +27,7 @@ target_link_libraries(Tuxiaolai_Toolbox PRIVATE
     Qt6::Widgets
     Qt6::Network
     Qt6::Svg
+    Qt6::WebEngineWidgets
 )
 
 install(TARGETS Tuxiaolai_Toolbox
@@ -53,4 +56,18 @@ target_link_libraries(FileManager PRIVATE
     Qt6::Gui
     Qt6::Widgets
     Qt6::Svg
+)
+
+# --- Tu 浏览器（独立调试）---
+add_executable(TuBrowser
+    tubrowser/BrowserWidget.cpp
+    tubrowser/BrowserWidget.h
+    tubrowser/main_browser.cpp
+)
+
+target_link_libraries(TuBrowser PRIVATE
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::WebEngineWidgets
 )

@@ -23,6 +23,8 @@ find_package(Qt6 REQUIRED COMPONENTS
     Widgets
     Network
     Svg
+    WebEngineWidgets
+    PrintSupport
 )
 
 # 启用自动 MOC、UIC、RCC
