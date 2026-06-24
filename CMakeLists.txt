@@ -5,20 +5,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ============================================================
-# Qt 配置 — vcpkg 编译的 Qt 6.11.1（含 H.264 proprietary-codecs）
+# Qt 配置 — 硬编码 Qt 6.11.1 路径（含 H.264 proprietary-codecs）
 # ============================================================
-# 本分支用于 TuBrowser 测试 Qt 6.11.1。
+# Qt 6.11.1 由 vcpkg 编译，产物已复制到与官方 Qt 相同的目录结构
 # Qt 路径：D:/tuxiaolai/Qt/6.11.1/msvc2022_64
-#
-# 编译方式：
-#   cmake -B build -G Ninja
-#         -DCMAKE_TOOLCHAIN_FILE=D:/vcpkg/scripts/buildsystems/vcpkg.cmake
 # ============================================================
 
-set(CMAKE_TOOLCHAIN_FILE "D:/vcpkg/scripts/buildsystems/vcpkg.cmake")
-
-# 强制指定 Qt 6.11.1 路径（覆盖 CLion 可能传入的旧路径）
-set(Qt6_DIR "D:/tuxiaolai/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6")
+set(CMAKE_PREFIX_PATH "D:/tuxiaolai/Qt/6.11.1/msvc2022_64")
 
 # 查找 Qt 模块
 find_package(Qt6 REQUIRED COMPONENTS
