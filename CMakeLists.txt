@@ -17,6 +17,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_TOOLCHAIN_FILE "D:/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
+# 强制指定 Qt 6.11.1 路径（覆盖 CLion 可能传入的旧路径）
+set(Qt6_DIR "D:/tuxiaolai/Qt/6.11.1/msvc2022_64/lib/cmake/Qt6")
+
 # 查找 Qt 模块
 find_package(Qt6 REQUIRED COMPONENTS
     Core
