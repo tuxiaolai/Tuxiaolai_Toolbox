@@ -20,6 +20,7 @@
 #include <QWebEngineDownloadRequest>
 #include <QWebEnginePage>
 #include <QWebEngineProfile>
+#include <QWebEngineSettings>
 #include <QWebEngineView>
 
 // ============================================================
@@ -79,6 +80,7 @@ public:
 public slots:
     void navigateToUrl(const QString &urlStr);
     void addBlankTab();
+    void openInExternalBrowser();
 
 private slots:
     void onUrlEntered();
@@ -95,6 +97,7 @@ private:
     QPushButton  *m_btnBack;
     QPushButton  *m_btnForward;
     QPushButton  *m_btnRefresh;
+    QPushButton  *m_btnExternal;
     QLineEdit    *m_urlBar;
 
     // 标签页

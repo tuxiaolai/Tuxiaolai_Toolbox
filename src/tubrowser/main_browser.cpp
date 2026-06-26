@@ -13,6 +13,13 @@
 
 int main(int argc, char *argv[])
 {
+    // Chromium 命令行标志（必须在 QApplication 创建前设置）
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS",
+        "--enable-features=PlatformHEVCDecoderSupport"
+        ",UseChromeMediaPipeline"
+        ",MediaFoundationD3D11VideoEncode"
+        " --autoplay-policy=no-user-gesture-required");
+
     QApplication app(argc, argv);
     app.setApplicationName("TuBrowser");
     app.setApplicationVersion("1.0");
@@ -27,6 +34,10 @@ int main(int argc, char *argv[])
     // 菜单栏
     auto *fileMenu = window.menuBar()->addMenu("文件");
     fileMenu->addAction("新建标签页", browser, &BrowserWidget::addBlankTab);
+    fileMenu->addSeparator();
+    fileMenu->addAction("在系统浏览器中打开", browser,
+                       &BrowserWidget::openInExternalBrowser);
+    fileMenu->addSeparator();
     fileMenu->addAction("退出", &window, &QMainWindow::close);
 
     window.show();

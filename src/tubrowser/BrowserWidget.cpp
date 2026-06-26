@@ -6,6 +6,7 @@
 #include "BrowserWidget.h"
 
 #include <QApplication>
+#include <QDesktopServices>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QHBoxLayout>
@@ -141,7 +142,18 @@ void BrowserWidget::setupProfile()
     m_profile->setHttpUserAgent(
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/125.0.0.0 Safari/537.36 TuBrowser/1.0");
+        "Chrome/131.0.0.0 Safari/537.36");
+
+    // 启用 WebEngine 媒体相关设置
+    auto *settings = m_profile->settings();
+    settings->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
+    settings->setAttribute(QWebEngineSettings::JavascriptCanOpenWindows, true);
+    settings->setAttribute(QWebEngineSettings::FullScreenSupportEnabled, true);
+    settings->setAttribute(QWebEngineSettings::WebGLEnabled, true);
+    settings->setAttribute(QWebEngineSettings::LocalContentCanAccessRemoteUrls, true);
+    settings->setAttribute(QWebEngineSettings::ErrorPageEnabled, true);
+    settings->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+    settings->setAttribute(QWebEngineSettings::PlaybackRequiresUserGesture, false);
 }
 
 void BrowserWidget::setupUI()
@@ -219,6 +231,12 @@ void BrowserWidget::setupUI()
     m_btnRefresh->setFixedSize(30, 28);
     navLayout->addWidget(m_btnRefresh);
 
+    // 外部浏览器打开按钮
+    m_btnExternal = new QPushButton("⇱");
+    m_btnExternal->setToolTip("在系统浏览器中打开（视频页面）");
+    m_btnExternal->setFixedSize(30, 28);
+    navLayout->addWidget(m_btnExternal);
+
     m_urlBar = new QLineEdit;
     m_urlBar->setPlaceholderText("搜索或输入网址...");
     m_urlBar->setClearButtonEnabled(true);
@@ -287,6 +305,10 @@ void BrowserWidget::connectSignals()
     connect(m_btnRefresh, &QPushButton::clicked, [this]() {
         if (auto *v = m_tabs->currentView()) v->reload();
     });
+
+    // 外部浏览器打开
+    connect(m_btnExternal, &QPushButton::clicked,
+            this, &BrowserWidget::openInExternalBrowser);
 
     // 标签页切换 → 同步地址栏和按钮状态
     connect(m_tabs, &QTabWidget::currentChanged, this, [this](int /*idx*/) {
@@ -374,5 +396,15 @@ void BrowserWidget::onDownloadRequested(QWebEngineDownloadRequest *download)
         download->accept();
     } else {
         download->cancel();
+    }
+}
+
+void BrowserWidget::openInExternalBrowser()
+{
+    if (auto *v = m_tabs->currentView()) {
+        QUrl url = v->url();
+        if (!url.isEmpty() && url.isValid()) {
+            QDesktopServices::openUrl(url);
+        }
     }
 }
