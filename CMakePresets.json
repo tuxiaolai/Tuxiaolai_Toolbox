@@ -1,0 +1,33 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "qt611-debug",
+            "displayName": "Qt 6.11.1 Debug (MSVC)",
+            "description": "Debug build with Qt 6.11.1 using Visual Studio 2022",
+            "generator": "Visual Studio 17 2022",
+            "architecture": {
+                "value": "x64",
+                "strategy": "set"
+            },
+            "binaryDir": "${sourceDir}/cmake-build-qt611",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "qt611-release",
+            "displayName": "Qt 6.11.1 Release (MSVC)",
+            "description": "Release build with Qt 6.11.1 using Visual Studio 2022",
+            "generator": "Visual Studio 17 2022",
+            "architecture": {
+                "value": "x64",
+                "strategy": "set"
+            },
+            "binaryDir": "${sourceDir}/cmake-build-qt611-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ]
+}
