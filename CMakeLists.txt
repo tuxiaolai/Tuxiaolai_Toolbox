@@ -5,12 +5,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ============================================================
-# Qt 配置 — 编译时通过 -DCMAKE_PREFIX_PATH 指定 Qt Kit 路径
+# Qt 配置 — 硬编码 Qt 6.11.1 路径
 # ============================================================
-# Qt 6.11.1 (CLion Custom Qt Build):
-#   cmake -B build -G "Visual Studio 17 2022" -A x64 ^
-#         -DCMAKE_PREFIX_PATH=D:/tuxiaolai/Qt/6.11.1/msvc2022_64
+# Qt 6.11.1 由 vcpkg 编译，产物已复制到与官方 Qt 相同的目录结构
+# Qt 路径：D:/tuxiaolai/Qt/6.11.1/msvc2022_64
 # ============================================================
+
+set(CMAKE_PREFIX_PATH "D:/tuxiaolai/Qt/6.11.1/msvc2022_64")
 
 # 查找 Qt 模块
 find_package(Qt6 REQUIRED COMPONENTS
