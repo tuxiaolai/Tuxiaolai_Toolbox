@@ -25,6 +25,13 @@ static void toolboxMsgFilter(QtMsgType type, const QMessageLogContext &ctx,
 
 int main(int argc, char *argv[])
 {
+    // Chromium 命令行标志（必须在 QApplication 创建前设置）
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS",
+        "--enable-features=PlatformHEVCDecoderSupport"
+        ",UseChromeMediaPipeline"
+        ",MediaFoundationD3D11VideoEncode"
+        " --autoplay-policy=no-user-gesture-required");
+
     QApplication app(argc, argv);
     g_defaultMsgHandler = qInstallMessageHandler(toolboxMsgFilter);
 

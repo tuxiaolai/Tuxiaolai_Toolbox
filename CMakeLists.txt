@@ -12,6 +12,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #       -DCMAKE_PREFIX_PATH=/path/to/Qt/6.10.2/msvc2022_64
 # ============================================================
 
+set(CMAKE_PREFIX_PATH "D:/tuxiaolai/Qt/6.11.1/msvc2022_64")
+
 # 查找 Qt 模块
 find_package(Qt6 REQUIRED COMPONENTS
     Core
