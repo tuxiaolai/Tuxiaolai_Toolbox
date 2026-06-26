@@ -16,6 +16,7 @@ add_executable(Tuxiaolai_Toolbox
     main.cpp
     app/ToolboxWindow.cpp
     app/ToolboxWindow.h
+    file-manager/resources.qrc
 )
 
 target_link_libraries(Tuxiaolai_Toolbox PRIVATE
