@@ -1,27 +1,26 @@
 # ============================================================
-# 主应用（组合所有模块）
+# 主构建入口 — 聚合所有子模块
 # ============================================================
-set(MAIN_SOURCES
+# 每个子模块提供独立的静态库 + 调试用可执行文件
+# 主应用 Tuxiaolai_Toolbox 链接所有子模块库
+# ============================================================
+
+# 子模块
+add_subdirectory(tubrowser)
+add_subdirectory(file-manager)
+
+# ============================================================
+# 主应用（集成所有模块）
+# ============================================================
+add_executable(Tuxiaolai_Toolbox
     main.cpp
     app/ToolboxWindow.cpp
-    file-manager/MainWindow.cpp
-    file-manager/SettingsDialog.cpp
-    file-manager/CachedIconProvider.cpp
-    file-manager/resources.qrc
-    tubrowser/BrowserWidget.cpp
-)
-
-set(MAIN_HEADERS
     app/ToolboxWindow.h
-    file-manager/MainWindow.h
-    file-manager/SettingsDialog.h
-    file-manager/CachedIconProvider.h
-    tubrowser/BrowserWidget.h
 )
-
-add_executable(Tuxiaolai_Toolbox ${MAIN_SOURCES} ${MAIN_HEADERS})
 
 target_link_libraries(Tuxiaolai_Toolbox PRIVATE
+    tubrowser
+    filemanager
     Qt6::Core
     Qt6::Gui
     Qt6::Widgets
@@ -33,41 +32,4 @@ target_link_libraries(Tuxiaolai_Toolbox PRIVATE
 install(TARGETS Tuxiaolai_Toolbox
     BUNDLE  DESTINATION .
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-# ============================================================
-# 独立模块入口（可单独编译调试）
-# ============================================================
-
-# --- 文件管理器 ---
-add_executable(FileManager
-    file-manager/MainWindow.cpp
-    file-manager/MainWindow.h
-    file-manager/SettingsDialog.cpp
-    file-manager/SettingsDialog.h
-    file-manager/CachedIconProvider.cpp
-    file-manager/CachedIconProvider.h
-    file-manager/resources.qrc
-    file-manager/main_filemanager.cpp
-)
-
-target_link_libraries(FileManager PRIVATE
-    Qt6::Core
-    Qt6::Gui
-    Qt6::Widgets
-    Qt6::Svg
-)
-
-# --- Tu 浏览器（独立调试）---
-add_executable(TuBrowser
-    tubrowser/BrowserWidget.cpp
-    tubrowser/BrowserWidget.h
-    tubrowser/main_browser.cpp
-)
-
-target_link_libraries(TuBrowser PRIVATE
-    Qt6::Core
-    Qt6::Gui
-    Qt6::Widgets
-    Qt6::WebEngineWidgets
 )
