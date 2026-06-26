@@ -33,6 +33,9 @@ target_include_directories(filemanager PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 # 独立可执行文件（调试用）— 无需 MOC
 add_executable(FileManager
     main_filemanager.cpp
+    resources.qrc
 )
+
+set_target_properties(FileManager PROPERTIES AUTORCC ON)
 
 target_link_libraries(FileManager PRIVATE filemanager)
