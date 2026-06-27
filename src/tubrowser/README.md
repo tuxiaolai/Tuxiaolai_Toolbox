@@ -19,12 +19,6 @@
 - 开发者工具（F12，需 WebEngine Inspector 支持）
 - 系统浏览器打开（⇱ 按钮，调用 `QDesktopServices::openUrl`）
 
-## 独立入口
-
-```bash
-cmake --build build --target TuBrowser
-```
-
 ## 依赖
 
 - Qt6::Core

@@ -16,7 +16,6 @@
 |------|------|------|
 | README | `README.md` | 项目总览、模块说明、项目结构 |
 | 问题与解决方案 | `TROUBLESHOOTING.md` | 开发中遇到的问题以及解决方案 |
-| 文件管理器说明 | `src/file-manager/README.md` | 文件管理器模块文档 |
 | Tu 浏览器说明 | `src/tubrowser/README.md` | 浏览器模块文档 |
 | 主窗口说明 | `src/app/README.md` | 主窗口布局与交互说明 |
 | 图标分类 | `src/file-manager/icons/ICONS.md` | 图标命名与分类参考 |

@@ -69,14 +69,3 @@ src/file-manager/
 └── icons/                 ← JetBrains IntelliJ SVG 图标
     └── ICONS.md           ← 图标分类说明
 ```
-
-## 构建
-
-在项目根目录用 CLion 打开，或手动执行：
-
-```bash
-# 需在 Visual Studio Developer Command Prompt 中执行
-cmake -B build -G Ninja \
-    -DCMAKE_PREFIX_PATH=D:/tuxiaolai/Qt/6.10.2/msvc2022_64
-cmake --build build
-```

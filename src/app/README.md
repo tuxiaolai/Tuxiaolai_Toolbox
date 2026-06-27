@@ -34,9 +34,3 @@
 - 深邃底色 `#0d0d0f`
 - 柔和对比 + 蓝色强调 `#5b9aff`
 - 支持右键菜单、ToolTip 统一样式
-
-## 入口
-
-```bash
-cmake --build build --target Tuxiaolai_Toolbox
-```
