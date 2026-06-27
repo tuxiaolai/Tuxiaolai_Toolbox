@@ -90,7 +90,6 @@ Tuxiaolai_Toolbox/
 ├── README.md                   ← 本文件
 ├── docs/                       ← 项目文档
 │   ├── INDEX.md                ← 文档索引
-│   └── DESIGN_DECISIONS.md     ← 设计决策记录
 ├── src/
 │   ├── CMakeLists.txt          ← 子模块聚合（add_subdirectory）
 │   ├── main.cpp                ← 主入口（启动 ToolboxWindow）
@@ -112,55 +111,6 @@ Tuxiaolai_Toolbox/
 ```
 
 所有图标自动适配浅色/深色系统主题。
-
----
-
-## 构建方式
-
-### 前置条件
-
-- Qt 6.11.1（MSVC 2022 版本，需包含 WebEngineWidgets）
-- Visual Studio 18 Community 2025（含 MSVC 14.50）
-- CMake 3.16+
-- Ninja
-
-### 编译
-
-从 **Visual Studio Developer Command Prompt** 执行：
-
-```bash
-# 克隆
-git clone https://github.com/tuxiaolai/Tuxiaolai_Toolbox.git
-cd Tuxiaolai_Toolbox
-
-# 配置（将 /path/to/Qt 替换为你的 Qt 安装路径）
-cmake -B build -G Ninja ^
-    -DCMAKE_PREFIX_PATH=/path/to/Qt/6.11.1/msvc2022_64
-
-# 编译主程序（集成所有模块）
-cmake --build build --target Tuxiaolai_Toolbox
-
-# 编译独立模块
-cmake --build build --target FileManager
-cmake --build build --target TuBrowser
-```
-
-### CLion 配置
-
-1. 文件 → 打开 → 选择项目目录
-2. CMake 预设选择 `qt611-debug` 或 `qt611-release`
-3. 在 Target 下拉中选择要编译的目标
-4. 点击 ▶ 编译运行
-
-> 如不使用 CMake Presets，请在 Settings → Build → CMake 中设置
-> `-DCMAKE_PREFIX_PATH=/path/to/Qt/6.11.1/msvc2022_64`
-
----
-
-## Git 工作流
-
-项目使用 `git worktree` 管理并行开发分支，每个分支对应 `Branch_Project/` 下的独立工作树目录。
-CLion 中直接打开对应目录即可切换到该分支。主分支 `main` 始终保持稳定。
 
 ---
 
