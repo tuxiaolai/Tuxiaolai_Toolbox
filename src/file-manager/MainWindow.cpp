@@ -2,7 +2,14 @@
  * @file MainWindow.cpp
  * @brief 文件管理器 — 主窗口实现
  *
- * 路径栏 + 按钮导航到目录，树视图展示目录层级。
+ * 核心功能：
+ *   - 路径栏 + 浏览按钮导航目录
+ *   - QFileSystemModel + QTreeView 树视图展示
+ *   - 右键菜单：新建文件/文件夹、复制/剪切/粘贴、重命名、删除
+ *   - 系统剪贴板互通（与 Windows 资源管理器互相复制粘贴）
+ *   - 平滑滚轮动画（SmoothTreeView）
+ *   - 三种图标模式（NoTintDelegate 避免选中时图标变色）
+ *   - 设置对话框：图标模式、状态栏、回收站、列显隐、滚轮步长
  */
 
 #include "MainWindow.h"

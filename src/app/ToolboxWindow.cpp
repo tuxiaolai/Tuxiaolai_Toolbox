@@ -2,8 +2,15 @@
  * @file ToolboxWindow.cpp
  * @brief 兔小赖工具箱主窗口实现
  *
- * 布局：
- *   [侧边栏 50px 固定] [活动栏 ⇔ 内容区]
+ * 布局结构：
+ *   [侧边栏 50px 固定] [活动栏 (QSplitter) ⇔ 内容区（预留）]
+ *                       │
+ *                       ├ index 0: FileManager::MainWindow
+ *                       └ index 1: BrowserWidget（Tu浏览器）
+ *
+ * 侧边栏交互：
+ *   - 图标点击 → 切换活动栏的 QStackedWidget 页面
+ *   - 空白区域拖拽 → 移动无边框窗口
  */
 
 #include "ToolboxWindow.h"

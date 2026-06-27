@@ -2,7 +2,14 @@
  * @file main_browser.cpp
  * @brief Tu 浏览器独立入口（调试用）
  *
- * 编译为 TuBrowser 目标，不依赖主窗口即可运行。
+ * 编译为 TuBrowser 目标，独立于主窗口运行。
+ * 包含菜单栏（新建标签页、系统浏览器打开、退出）。
+ *
+ * Chromium 标志说明：
+ *   - PlatformHEVCDecoderSupport: 启用系统 HEVC 硬解
+ *   - UseChromeMediaPipeline: Chrome 媒体管道
+ *   - MediaFoundationD3D11VideoEncode: MediaFoundation 编码
+ *   - autoplay-policy: 允许自动播放（B站等视频网站）
  */
 
 #include <QApplication>

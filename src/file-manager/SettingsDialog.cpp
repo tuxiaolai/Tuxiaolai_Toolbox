@@ -1,6 +1,8 @@
 /**
  * @file SettingsDialog.cpp
  * @brief 文件管理器设置对话框实现
+ *
+ * 布局：图标模式（三选一单选按钮组） → 选项（状态栏/回收站） → 列显隐（复选框） → 滚轮速度滑块
  */
 
 #include "SettingsDialog.h"

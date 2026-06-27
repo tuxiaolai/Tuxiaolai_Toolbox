@@ -2,12 +2,18 @@
  * @file BrowserWidget.h
  * @brief Tu 浏览器 — 基于 QWebEngineView 的标签页浏览器控件
  *
- * 可嵌入主窗口或独立运行。功能：
+ * 可嵌入主窗口或独立运行。架构分三层：
+ *   - TuBrowserPage：自定义 QWebEnginePage，拦截 createWindow 在新标签页打开链接
+ *   - BrowserTabWidget：标签页容器（QTabWidget），管理多标签生命周期
+ *   - BrowserWidget：完整浏览器控件，组合导航栏 + 标签页 + Cookie + 下载管理
+ *
+ * 功能：
  *   - 多标签页浏览（QTabWidget + createWindow 拦截）
  *   - 导航栏（地址栏 / 后退 / 前进 / 刷新）
- *   - Cookie 持久化
- *   - 文件下载管理
- *   - 开发者工具（F12）
+ *   - Cookie 持久化（QWebEngineProfile 持久存储）
+ *   - 文件下载管理（downloadRequested 信号拦截）
+ *   - 开发者工具（F12 打开 DevTools）
+ *   - 系统浏览器打开（⇱ 按钮）
  */
 
 #ifndef TU_BROWSER_WIDGET_H

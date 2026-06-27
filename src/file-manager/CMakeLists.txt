@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC OFF)
 set(CMAKE_AUTORCC OFF)
 set(CMAKE_AUTOUIC OFF)
 
-# 静态库，供主应用链接
+# 静态库，供主应用链接（资源文件由各可执行目标自行编译）
 add_library(filemanager STATIC
     MainWindow.cpp
     MainWindow.h
@@ -16,10 +16,9 @@ add_library(filemanager STATIC
     SettingsDialog.h
     CachedIconProvider.cpp
     CachedIconProvider.h
-    resources.qrc
 )
 
-set_target_properties(filemanager PROPERTIES AUTOMOC ON AUTORCC ON)
+set_target_properties(filemanager PROPERTIES AUTOMOC ON)
 
 target_link_libraries(filemanager PUBLIC
     Qt6::Core

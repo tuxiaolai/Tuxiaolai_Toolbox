@@ -2,7 +2,12 @@
  * @file MainWindow.h
  * @brief 文件管理器 — 主窗口声明
  *
- * 树视图文件浏览 + 右键菜单操作。
+ * 基于 QFileSystemModel + QTreeView 的本地文件系统浏览器。
+ * 提供完整的文件操作：导航、新建、重命名、删除、复制/粘贴/剪切。
+ * 支持三种图标模式（系统图标 / 预设 SVG / 无图标），自动适配深/浅色主题。
+ *
+ * 可作为独立窗口运行，也可作为组件嵌入 ToolboxWindow 的活动面板。
+ * 双击文件时发出 fileActivated 信号，供外部模块集成。
  */
 
 #ifndef FILEMANAGER_MAINWINDOW_H

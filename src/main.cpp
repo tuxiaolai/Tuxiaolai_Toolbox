@@ -2,7 +2,14 @@
  * @file main.cpp
  * @brief Tu Toolbox（兔小赖的工具箱）— 主入口
  *
- * 启动工具箱主窗口，左侧文件管理器可折叠侧边栏 + 右侧工具内容区。
+ * 启动工具箱主窗口（ToolboxWindow），布局为侧边栏 + 活动面板 + 内容区。
+ * 支持文件管理器与 Tu 浏览器两个活动模块的切换。
+ *
+ * Chromium 命令行标志需在 QApplication 创建前设置，用于：
+ * - 启用平台 HEVC 解码支持（硬件加速）
+ * - 启用 Chrome 媒体管道
+ * - 启用 MediaFoundation 视频编码
+ * - 允许无用户手势自动播放（B站视频等）
  */
 
 #include <QApplication>

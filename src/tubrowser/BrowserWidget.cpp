@@ -1,6 +1,11 @@
 /**
  * @file BrowserWidget.cpp
  * @brief Tu 浏览器实现
+ *
+ * 三个核心类：
+ *   - TuBrowserPage:    重写 createWindow()，在新标签页中打开链接而非弹出窗口
+ *   - BrowserTabWidget: 标签页管理器，含关闭按钮、右键菜单
+ *   - BrowserWidget:    完整控件，组合导航栏 + 标签页，管理 Cookie 持久化与下载
  */
 
 #include "BrowserWidget.h"

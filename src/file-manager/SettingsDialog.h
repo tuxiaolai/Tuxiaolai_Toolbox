@@ -1,6 +1,13 @@
 /**
  * @file SettingsDialog.h
  * @brief 文件管理器设置对话框
+ *
+ * 提供以下设置项：
+ *   - 图标显示模式（系统图标 / 预设SVG图标 / 无图标）
+ *   - 状态栏显示开关
+ *   - 删除时移入回收站（代替永久删除）
+ *   - 列显隐（大小 / 类型 / 修改日期）
+ *   - 滚动速度调节（滑块 20~200px/步）
  */
 
 #ifndef FILEMANAGER_SETTINGSDIALOG_H
